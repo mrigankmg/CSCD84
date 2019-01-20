@@ -296,14 +296,12 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if (isQueueEmpty) {
-          printf("No path found, standing still.\n");
-          path[0][0] = mouse_x;
-          path[0][1] = mouse_y;
-          path[1][0] = mouse_x;
-          path[1][1] = mouse_y;
-    }
   }
+  printf("No path found, standing still.\n");
+  path[0][0] = mouse_x;
+  path[0][1] = mouse_y;
+  path[1][0] = mouse_x;
+  path[1][1] = mouse_y;
 } else if (mode == 1) {
   //-------- DFS --------//
   push(mouse_x + (mouse_y * size_X));
