@@ -211,6 +211,7 @@ visit_order[cell_x][cell_y]
     path[x][0] = -1;
     path[x][1] = -1;
   }*/
+  //Reset visited and visit_order values for every single iteration of the searches.
   for(int x = 0; x < size_X; x++) {
     for (int y = 0; y < size_Y; y ++) {
       visited[x][y] = 0;
@@ -219,7 +220,9 @@ visit_order[cell_x][cell_y]
   }
   visited[mouse_x][mouse_y] = -1;
 
+//BFS
 if(mode == 0) {
+  //Store cell_index within queue, first one being the intial mouse location.
   enqueue(mouse_x + (mouse_y * size_X));
   while(!isQueueEmpty()){
     cell_index = dequeue();
@@ -227,11 +230,14 @@ if(mode == 0) {
     cell_y = cell_index / size_Y;
     visit_counter++;
     visit_order[cell_x][cell_y] = visit_counter;
+    //Check whether any cheese is at the location of the current expanded cell.
     for(int x = 0; x < cheeses; x++) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
+        //Count the number of steps in the path.
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
         }
+        //Add required cells in the path.
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter --;
           path[path_counter][0] = at % size_X;
@@ -241,48 +247,60 @@ if(mode == 0) {
         return;
       }
     }
+    //Check if the cell above is not visited and is connected to the current cell.
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
+      //Check if the cell above has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell above doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x + ((cell_y-1) * size_X));
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
     }
+    //Check if the cell to the right is not visited and is connected to the current cell.
     if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == 0) {
+      //Check if the cell to the right has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x + 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell to the right doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x + 1 + (cell_y * size_X));
         visited[cell_x+1][cell_y] = cell_index;
       }
       catFound = false;
     }
+    //Check if the cell below is not visited and is connected to the current cell.
     if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == 0) {
+      //Check if the cell below has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y + 1 == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell below doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x + ((cell_y+1) * size_X));
         visited[cell_x][cell_y+1] = cell_index;
       }
       catFound = false;
     }
+    //Check if the cell to the left is not visited and is connected to the current cell.
     if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == 0) {
+      //Check if the cell to the left has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x - 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell to the left doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x - 1 + (cell_y * size_X));
         visited[cell_x-1][cell_y] = cell_index;
