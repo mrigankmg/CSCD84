@@ -49,7 +49,7 @@ int stack[graph_size];
 int pqueue[graph_size][2];
 int top = -1;
 int front = 0;
-int rear = -1;
+int back = -1;
 int pfront = 0;
 int queueItemCount = 0;
 int pqueueItemCount = 0;
@@ -214,6 +214,7 @@ visit_order[cell_x][cell_y]
     path[x][0] = -1;
     path[x][1] = -1;
   }*/
+  //Reset visited and visit_order values for every single iteration of the searches.
   for(int x = 0; x < size_X; x++) {
     for (int y = 0; y < size_Y; y ++) {
       visited[x][y] = 0;
@@ -222,18 +223,25 @@ visit_order[cell_x][cell_y]
   }
   visited[mouse_x][mouse_y] = -1;
 
+//BFS
 if(mode == 0) {
-  //-------- BFS --------//
+  //Store cell_index within queue, first one being the intial mouse location.
   enqueue(mouse_x + (mouse_y * size_X));
-  printf("Mouse at: %d, %d. Cat 1: %d, %d. Cat 2: %d, %d. Cat 3: %d, %d.\n", mouse_x, mouse_y, cat_loc[0][0], cat_loc[0][1], cat_loc[1][0], cat_loc[1][1], cat_loc[2][0], cat_loc[2][1]);
+  printf("Mouse at: (%d, %d) | ", mouse_x, mouse_y);
+  for (int i=0; i<cats; i++) {
+    printf("Cat %d: (%d, %d) ", i, cat_loc[i][0], cat_loc[i][1]);
+  }
+  printf("\n");
   while(!isQueueEmpty()){
     cell_index = dequeue();
     cell_x = cell_index % size_X;
     cell_y = cell_index / size_Y;
     visit_counter++;
     visit_order[cell_x][cell_y] = visit_counter;
+    //Check whether any cheese is at the location of the current expanded cell.
     for(int x = 0; x < cheeses; x++) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
+        //Count the number of steps in the path.
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
         }
@@ -244,52 +252,64 @@ if(mode == 0) {
           printf("(%d, %d) <- ", at % size_X, at / size_Y);
         }
         emptyQueue();
-        printf("Start\n");
+        printf("Start\n============\n");
         return;
       }
     }
+    //Check if the cell above is not visited and is connected to the current cell.
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
+      //Check if the cell above has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell above doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x + ((cell_y-1) * size_X));
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
     }
+    //Check if the cell to the right is not visited and is connected to the current cell.
     if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == 0) {
+      //Check if the cell to the right has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x + 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell to the right doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x + 1 + (cell_y * size_X));
         visited[cell_x+1][cell_y] = cell_index;
       }
       catFound = false;
     }
+    //Check if the cell below is not visited and is connected to the current cell.
     if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == 0) {
+      //Check if the cell below has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y + 1 == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell below doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x + ((cell_y+1) * size_X));
         visited[cell_x][cell_y+1] = cell_index;
       }
       catFound = false;
     }
+    //Check if the cell to the left is not visited and is connected to the current cell.
     if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == 0) {
+      //Check if the cell to the left has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x - 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
         }
       }
+      //If the cell to the left doesn't have a cat, only then add it to the BFS queue.
       if(!catFound) {
         enqueue(cell_x - 1 + (cell_y * size_X));
         visited[cell_x-1][cell_y] = cell_index;
@@ -297,7 +317,7 @@ if(mode == 0) {
       catFound = false;
     }
   }
-  printf("No path found, standing still.\n");
+  printf("No path found, standing still.\n============\n");
   path[0][0] = mouse_x;
   path[0][1] = mouse_y;
   path[1][0] = mouse_x;
@@ -311,7 +331,6 @@ if(mode == 0) {
     cell_y = cell_index / size_Y;
     visit_counter++;
     visit_order[cell_x][cell_y] = visit_counter;
-    printf("%d\n", cell_index);
     for(int x = 0; x < cheeses; x++) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
@@ -321,10 +340,10 @@ if(mode == 0) {
           path_counter --;
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
+          printf("(%d, %d) <- ", at % size_X, at / size_Y);
         }
-        printf("%d\n", top);
         emptyStack();
-        printf("-------------\n");
+        printf("START\n");
         return;
       }
     }
@@ -383,10 +402,6 @@ if(mode == 0) {
   enpqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
   while(!isPQueueEmpty()){
     cell_index = depqueue();
-    printf("%d\n",pqueueItemCount);
-    if (cell_index < 0) {
-      while(true);
-    }
     cell_x = cell_index % size_X;
     cell_y = cell_index / size_Y;
     visit_counter++;
@@ -401,6 +416,8 @@ if(mode == 0) {
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
         }
+        printf("(%d, %d) ", path[path_counter][0], path[path_counter][1]);
+        printf("%d\n", pqueueItemCount);
         emptyPQueue();
         return;
       }
@@ -412,7 +429,8 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x + ((cell_y-1) * size_X), heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        int h = (((mouse_x - cell_x) * (mouse_x - cell_x)) + ((mouse_y - cell_y) * (mouse_y - cell_y))) + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
+        enpqueue(cell_x + ((cell_y-1) * size_X), h);
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
@@ -454,6 +472,11 @@ if(mode == 0) {
       catFound = false;
     }
   }
+  path[0][0] = mouse_x;
+  path[0][1] = mouse_y;
+  path[1][0] = mouse_x;
+  path[1][1] = mouse_y;
+  return;
 }
 }
 
@@ -463,10 +486,11 @@ bool isQueueEmpty() {
 }
 
 void enqueue(int cell_index) {
-    if(rear == graph_size-1) {
-      rear = -1;
+    if(back == graph_size-1) {
+      back = -1;
     }
-    queue[++rear] = cell_index;
+    back++;
+    queue[back] = cell_index;
     queueItemCount++;
 }
 
@@ -514,7 +538,6 @@ void emptyPQueue() {
   while (!isPQueueEmpty()){
     depqueue();
   }
-  printf("======================================\n");
 }
 
 //Stack
@@ -529,7 +552,7 @@ int pop() {
 }
 
 void push(int cell_index) {
-    top = top + 1;
+    top++;
     stack[top] = cell_index;
 }
 
