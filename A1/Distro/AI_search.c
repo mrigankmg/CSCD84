@@ -48,7 +48,7 @@ int queue[graph_size];
 int stack[graph_size];
 int top = -1;
 int front = 0;
-int rear = -1;
+int back = -1;
 int queueItemCount = 0;
 
 void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, int (*heuristic)(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4]))
@@ -371,10 +371,10 @@ bool isQueueEmpty() {
 }
 
 void enqueue(int cell_index) {
-    if(rear == graph_size-1) {
-      rear = -1;
+    if(back == graph_size-1) {
+      back = -1;
     }
-    queue[++rear] = cell_index;
+    queue[++back] = cell_index;
     queueItemCount++;
 }
 
