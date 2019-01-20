@@ -374,7 +374,8 @@ void enqueue(int cell_index) {
     if(back == graph_size-1) {
       back = -1;
     }
-    queue[++back] = cell_index;
+    back++;
+    queue[back] = cell_index;
     queueItemCount++;
 }
 
