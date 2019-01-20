@@ -245,7 +245,7 @@ if(mode == 0) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
         }
-        for(int at=cell_index; path_counter>0; at=visited[at % size_X][at / size_Y]) {  
+        for(int at=cell_index; path_counter>0; at=visited[at % size_X][at / size_Y]) {
           path_counter--;
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
@@ -317,11 +317,6 @@ if(mode == 0) {
       catFound = false;
     }
   }
-  printf("No path found, standing still.\n============\n");
-  path[0][0] = mouse_x;
-  path[0][1] = mouse_y;
-  path[1][0] = mouse_x;
-  path[1][1] = mouse_y;
 } else if (mode == 1) {
   //-------- DFS --------//
   push(mouse_x + (mouse_y * size_X));
@@ -347,7 +342,7 @@ if(mode == 0) {
         return;
       }
     }
-    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) { 
+    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
           catFound = true;
@@ -472,12 +467,12 @@ if(mode == 0) {
       catFound = false;
     }
   }
-  path[0][0] = mouse_x;
-  path[0][1] = mouse_y;
-  path[1][0] = mouse_x;
-  path[1][1] = mouse_y;
-  return;
 }
+printf("No path found, standing still.\n============\n");
+path[0][0] = mouse_x;
+path[0][1] = mouse_y;
+path[1][0] = mouse_x;
+path[1][1] = mouse_y;
 }
 
 //Queue
