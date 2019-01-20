@@ -404,7 +404,7 @@ int pop() {
 }
 
 void push(int cell_index) {
-    top = top + 1;
+    top++;
     stack[top] = cell_index;
 }
 
