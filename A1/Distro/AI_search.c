@@ -507,9 +507,9 @@ void emptyQueue() {
     }
     back++;
     int x = back;
-    for (; x > front && heu < pQueue[x][1]; x--) {
-      pQueue[x+1][0] = pQueue[x][0];
-      pQueue[x+1][1] = pQueue[x][1];
+    for (; x > front && heu < pQueue[x-1][1]; x--) {
+      pQueue[x][0] = pQueue[x-1][0];
+      pQueue[x][1] = pQueue[x-1][1];
     }
     pQueue[x][0] = cell_index;
     pQueue[x][1] = heu;
