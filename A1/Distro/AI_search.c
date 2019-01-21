@@ -45,14 +45,12 @@
 #include "AI_search.h"
 
 int queue[graph_size];
-int stack[graph_size];
-int pqueue[graph_size][2];
-int top = -1;
+int pQueue[graph_size][2];
 int front = 0;
 int back = -1;
-int pfront = 0;
 int queueItemCount = 0;
-int pqueueItemCount = 0;
+int stack[graph_size];
+int top = -1;
 
 void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, int (*heuristic)(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4]))
 {
@@ -113,7 +111,7 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 
 	Agent locations are coordinate pairs (x,y)
 
-   Arguments:
+   Arguments:front++
 		gr[graph_size][4]   - This is an adjacency list for the maze
 		path[graph_size][2] - An initially empty path for your code to fill.
 				      In this case, empty means all entries are initially -1
@@ -123,7 +121,8 @@ void search(double gr[graph_size][4], int path[graph_size][2], int visit_order[s
 						  doing BFS, the initial location is the
 						  start location, it's visit order is 1.
 						  Then the search would expand the immediateprev[cell_x + ((cell_y-1) * size_X)] = cell_index;
-						  neighbours of the initial node in some order,
+						  neighbours of the i  printf("TotalSTEPS!! %d\n", totalSteps);
+  totalSteps++;nitial node in some order,
 						  these would get a visit order of 2, 3, 4, and
 						  5 respectively, and so on.
 visit_order[cell_x][cell_y]
@@ -145,7 +144,7 @@ visit_order[cell_x][cell_y]
 				  or H_cost_nokitty(). The driver in AI_search_core_GL will pass the appropriate pointer
 				  depending on what search the user wants to run.
 
-				  If the mode is 0 or 1, this pointer is NULL
+				  If the mode is 0 or 1, this pofront++inter is NULL
 
 				  * How to call the heuristic function from within this function : *
 					- Like any other function:
@@ -208,8 +207,8 @@ visit_order[cell_x][cell_y]
   int visit_counter = 0;
   int path_counter = 0;
   int cell_index, cell_x, cell_y;
-  bool catFound;
-  int visited[size_X][size_Y];
+  bool catFound = false;
+  int visited[size_X][size_Y] = { 0 };
   /*for(int x = 0; x < graph_size; x++) {
     path[x][0] = -1;
     path[x][1] = -1;
@@ -217,7 +216,6 @@ visit_order[cell_x][cell_y]
   //Reset visited and visit_order values for every single iteration of the searches.
   for(int x = 0; x < size_X; x++) {
     for (int y = 0; y < size_Y; y ++) {
-      visited[x][y] = 0;
       visit_order[x][y] = 0;
     }
   }
@@ -227,11 +225,6 @@ visit_order[cell_x][cell_y]
 if(mode == 0) {
   //Store cell_index within queue, first one being the intial mouse location.
   enqueue(mouse_x + (mouse_y * size_X));
-  printf("Mouse at: (%d, %d) | ", mouse_x, mouse_y);
-  for (int i=0; i<cats; i++) {
-    printf("Cat %d: (%d, %d) ", i, cat_loc[i][0], cat_loc[i][1]);
-  }
-  printf("\n");
   while(!isQueueEmpty()){
     cell_index = dequeue();
     cell_x = cell_index % size_X;
@@ -392,9 +385,9 @@ if(mode == 0) {
   }
 } else if (mode == 2) {
   //-----A*-----//
-  enpqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
-  while(!isPQueueEmpty()){
-    cell_index = depqueue();
+  pEnqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+  while(!isQueueEmpty()){
+    cell_index = pDequeue();
     cell_x = cell_index % size_X;
     cell_y = cell_index / size_Y;
     visit_counter++;
@@ -403,6 +396,7 @@ if(mode == 0) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
+          printf("Here! %d\n", at);
         }
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter --;
@@ -415,7 +409,7 @@ if(mode == 0) {
         return;
       }
     }
-    int curr_cost = ((mouse_x - cell_x) * (mouse_x - cell_x)) + ((mouse_y - cell_y) * (mouse_y - cell_y));
+    int g_cost = sqrt(pow(cell_x-mouse_x, 2) + pow(cell_y-mouse_y, 2));
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
@@ -423,7 +417,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x + ((cell_y-1) * size_X), curr_cost + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + ((cell_y-1) * size_X), g_cost + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
@@ -435,7 +429,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x + 1 + (cell_y * size_X), curr_cost + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + 1 + (cell_y * size_X), g_cost + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x+1][cell_y] = cell_index;
       }
       catFound = false;
@@ -447,7 +441,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x + ((cell_y+1) * size_X), curr_cost + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + ((cell_y+1) * size_X), g_cost + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x][cell_y+1] = cell_index;
       }
       catFound = false;
@@ -459,7 +453,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x - 1 + (cell_y * size_X), curr_cost + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x - 1 + (cell_y * size_X), g_cost + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x-1][cell_y] = cell_index;
       }
       catFound = false;
@@ -475,7 +469,11 @@ path[1][1] = mouse_y;
 
 //Queue
 bool isQueueEmpty() {
-   return queueItemCount == 0;
+  if(queueItemCount == 0) {
+    front = 0;
+    back = -1;
+  }
+  return queueItemCount == 0;
 }
 
 void enqueue(int cell_index) {
@@ -488,12 +486,12 @@ void enqueue(int cell_index) {
 }
 
 int dequeue() {
-   int cell_index = queue[front];
-   front++;
+  int cell_index = queue[front];
+  front++;
+  queueItemCount--;
    if(front == graph_size) {
       front = 0;
    }
-   queueItemCount--;
    return cell_index;
 }
 
@@ -503,34 +501,51 @@ void emptyQueue() {
   }
 }
 
+/*void pEnqueue(int cell_index, int heu) {
+    if(back == graph_size-1) {
+      back = -1;
+    }
+    back++;
+    int x = 0;
+    for (x = 0; x < back; x++) {
+        if (heu < pQueue[x][1]) {
+            for (int y = back; y > x; y--) {
+                pQueue[y][0] = pQueue[y - 1][0];
+                pQueue[y][1] = pQueue[y - 1][1];
+            }
+            break;
+        }
+    }
+    pQueue[x][0] = cell_index;
+    pQueue[x][1] = heu;
+    queueItemCount++;
+} */
+
 //Priority Queue
-bool isPQueueEmpty() {
-  return pqueueItemCount == 0;
+void pEnqueue(int cell_index, int heu) {
+  int i = queueItemCount + front - 1;
+  for (; (i > front && pQueue[i][1] > heu); i--) {
+    pQueue[i+1][0] = pQueue[i][0];
+    pQueue[i+1][1] = pQueue[i][1];
+  }
+  pQueue[i+1][0] = cell_index;
+  pQueue[i+1][1] = heu;
+  queueItemCount++;
 }
 
-void enpqueue(int cell_index, int heu) {
-  int i;
-  for (i=pqueueItemCount-1+pfront; (i>pfront && pqueue[i][1] > heu); i--) {
-    pqueue[i+1][0] = pqueue[i][0];
-    pqueue[i+1][1] = pqueue[i][1];
+int pDequeue() {
+  int cell_index = pQueue[front][0];
+  front++;
+  if(front == graph_size) {
+    front = 0;
   }
-  pqueue[i+1][0] = cell_index;
-  pqueue[i+1][1] = heu;
-  pqueueItemCount++;
-}
-
-int depqueue() {
-  int cell_index = pqueue[pfront++][0];
-  if(pfront == graph_size) {
-    pfront = 0;
-  }
-  pqueueItemCount--;
+  queueItemCount--;
   return cell_index;
 }
 
 void emptyPQueue() {
-  while (!isPQueueEmpty()){
-    depqueue();
+  while (!isQueueEmpty()){
+    pDequeue();
   }
 }
 
@@ -576,18 +591,14 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 
 		These arguments are as described in the search() function above
  */
-  int h[10] = { 9999 };
   int small_h = graph_size;
-  for (int i=0;i<cheeses;i++) {
-    h[i] = ((cheese_loc[i][0] - x) * (cheese_loc[i][0] - x)) + ((cheese_loc[i][1] - y) * (cheese_loc[i][1] - y));
-  }
-
-  for (int i=0;i<cheeses;i++) {
-    if (small_h < h[i] && h[i] > 0) {
-      small_h = h[i];
+  for (int i = 0;i < cheeses;i++) {
+    int curr_h = sqrt(pow(cheese_loc[i][0] - x, 2) + pow(cheese_loc[i][1] - y, 2));
+    if (small_h > curr_h) {
+      small_h = curr_h;
     }
   }
-  return(small_h);		// <-- Evidently you will need to update this.
+  return small_h;
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])

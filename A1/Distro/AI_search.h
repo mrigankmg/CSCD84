@@ -45,9 +45,8 @@ bool isStackEmpty();
 int pop();
 void push(int cell_index);
 void emptyStack();
-bool isPQueueEmpty();
-void enpqueue(int cell_index, int heu);
-int depqueue();
+void pEnqueue(int cell_index, int heu);
+int pDequeue();
 void emptyPQueue();
 
 #endif
