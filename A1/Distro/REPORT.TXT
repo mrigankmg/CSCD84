@@ -8,25 +8,25 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): Mrigank Mehta
 
 Student Name 2 (last, first):
 
-Student number 1:
+Student number 1: 1001309014
 
 Student number 2:
 
-UTORid 1:
+UTORid 1: mehtamri
 
 UTORid 2:
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
  I certify that I have read the UTSC code on academic
-honesty and plaguarism. All work submitted as part
+honesty and plagarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _(student 1 name here)__	_(student 2 name here)__
+	Signed: _Mrigank Mehta_	_(student 2 name here)_
 
 
 (-5 marks for failing to provide the identifying
@@ -50,7 +50,7 @@ but explain carefully when needed.
 4 .- (1 marks) Explain how your heuristic function accounts for the presence of multiple cheeses.
 
 
-5 .- (1 marks) Is A* equivalent to BFS for this problem? or is it better/worse? explain your answer based on 
+5 .- (1 marks) Is A* equivalent to BFS for this problem? or is it better/worse? explain your answer based on
      your observations.
 
 6 .- (2 marks) Describe your heuristic function for A*-nokitty. How does it work? what factors are considered
@@ -64,7 +64,7 @@ _____________________________________________________
 
 Mark with an 'x' where appropriate. If something is only working partially, briefly describe what works, what
 doesn't work, or what problems exist.
-	
+
 		Complete/Working	Partial		Not done
 
 DFS
@@ -99,7 +99,7 @@ Marking:
            should produce a smarter mouse than all of
            BFS/DFS/A*.
 
-           The heuristic should accounts for known game 
+           The heuristic should accounts for known game
            factors that affect the mouse's chance of success.
 
            (to be marked competitively - smartest mouse
@@ -113,5 +113,3 @@ Marking:
 		 mouse most likely to win!
 
 Total for A1:       / out of 60
-
-
