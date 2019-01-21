@@ -249,10 +249,9 @@ if(mode == 0) {
           path_counter--;
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
-          printf("(%d, %d) <- ", at % size_X, at / size_Y);
         }
         emptyQueue();
-        printf("Start\n============\n");
+        printf("V: %d\n", visit_counter);
         return;
       }
     }
@@ -393,7 +392,6 @@ if(mode == 0) {
   }
 } else if (mode == 2) {
   //-----A*-----//
-  int curr_cost = 0;
   enpqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
   while(!isPQueueEmpty()){
     cell_index = depqueue();
@@ -412,11 +410,12 @@ if(mode == 0) {
           path[path_counter][1] = at / size_Y;
         }
         printf("(%d, %d) ", path[path_counter][0], path[path_counter][1]);
-        printf("%d\n", pqueueItemCount);
+        printf("%d\n", visit_counter);
         emptyPQueue();
         return;
       }
     }
+    int curr_cost = ((mouse_x - cell_x) * (mouse_x - cell_x)) + ((mouse_y - cell_y) * (mouse_y - cell_y));
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
@@ -424,8 +423,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        int h = (((mouse_x - cell_x) * (mouse_x - cell_x)) + ((mouse_y - cell_y) * (mouse_y - cell_y))) + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr);
-        enpqueue(cell_x + ((cell_y-1) * size_X), h);
+        enpqueue(cell_x + ((cell_y-1) * size_X), curr_cost + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
@@ -437,7 +435,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x + 1 + (cell_y * size_X), heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        enpqueue(cell_x + 1 + (cell_y * size_X), curr_cost + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x+1][cell_y] = cell_index;
       }
       catFound = false;
@@ -449,7 +447,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x + ((cell_y+1) * size_X), heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        enpqueue(cell_x + ((cell_y+1) * size_X), curr_cost + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x][cell_y+1] = cell_index;
       }
       catFound = false;
@@ -461,7 +459,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        enpqueue(cell_x - 1 + (cell_y * size_X), heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        enpqueue(cell_x - 1 + (cell_y * size_X), curr_cost + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x-1][cell_y] = cell_index;
       }
       catFound = false;
@@ -514,7 +512,7 @@ void enpqueue(int cell_index, int heu) {
   int i;
   for (i=pqueueItemCount-1+pfront; (i>pfront && pqueue[i][1] > heu); i--) {
     pqueue[i+1][0] = pqueue[i][0];
-    pqueue[i+1][1] = pqueue[i][0];
+    pqueue[i+1][1] = pqueue[i][1];
   }
   pqueue[i+1][0] = cell_index;
   pqueue[i+1][1] = heu;
@@ -578,7 +576,7 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 
 		These arguments are as described in the search() function above
  */
-  int h[10] = { -1 };
+  int h[10] = { 9999 };
   int small_h = graph_size;
   for (int i=0;i<cheeses;i++) {
     h[i] = ((cheese_loc[i][0] - x) * (cheese_loc[i][0] - x)) + ((cheese_loc[i][1] - y) * (cheese_loc[i][1] - y));
