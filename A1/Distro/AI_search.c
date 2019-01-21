@@ -506,15 +506,10 @@ void emptyQueue() {
       back = -1;
     }
     back++;
-    int x = 0;
-    for (x = 0; x < back; x++) {
-        if (heu < pQueue[x][1]) {
-            for (int y = back; y > x; y--) {
-                pQueue[y][0] = pQueue[y - 1][0];
-                pQueue[y][1] = pQueue[y - 1][1];
-            }
-            break;
-        }
+    int x = back;
+    for (; x > front && heu < pQueue[x][1]; x--) {
+      pQueue[x+1][0] = pQueue[x][0];
+      pQueue[x+1][1] = pQueue[x][1];
     }
     pQueue[x][0] = cell_index;
     pQueue[x][1] = heu;
