@@ -490,7 +490,8 @@ void enqueue(int cell_index) {
 }
 
 int dequeue() {
-   int cell_index = queue[front++];
+   int cell_index = queue[front];
+   front++;
    if(front == graph_size) {
       front = 0;
    }
