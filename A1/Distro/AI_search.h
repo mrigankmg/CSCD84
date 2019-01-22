@@ -49,6 +49,6 @@ void pEnqueue(int cell_index, int heu);
 int pDequeue();
 void emptyPQueue();
 bool isPQueueEmpty();
-int steps_to_cat(int curr_x, int curr_y, int cat_x, int cat_y, double gr[graph_size][4],int visited2[size_X][size_Y], int prev);
+//int steps_to_cat(int curr_x, int curr_y, int cat_x, int cat_y, double gr[graph_size][4],int visited2[size_X][size_Y], int prev);
 
 #endif
