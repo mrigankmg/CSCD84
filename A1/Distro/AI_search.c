@@ -208,7 +208,7 @@ visit_order[cell_x][cell_y]
   int path_counter = 0;
   int cell_index, cell_x, cell_y;
   bool catFound = false;
-  int visited[size_X][size_Y] = { 0 };
+  int visited[size_X][size_Y];
   /*for(int x = 0; x < graph_size; x++) {
     path[x][0] = -1;
     path[x][1] = -1;
@@ -217,6 +217,7 @@ visit_order[cell_x][cell_y]
   for(int x = 0; x < size_X; x++) {
     for (int y = 0; y < size_Y; y ++) {
       visit_order[x][y] = 0;
+      visited[x][y] = -99;
     }
   }
   visited[mouse_x][mouse_y] = -1;
@@ -238,7 +239,7 @@ if(mode == 0) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
         }
-        for(int at=cell_index; path_counter>0; at=visited[at % size_X][at / size_Y]) {
+        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter--;
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
@@ -249,7 +250,7 @@ if(mode == 0) {
       }
     }
     //Check if the cell above is not visited and is connected to the current cell.
-    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
+    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99) {
       //Check if the cell above has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
@@ -264,7 +265,7 @@ if(mode == 0) {
       catFound = false;
     }
     //Check if the cell to the right is not visited and is connected to the current cell.
-    if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == 0) {
+    if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == -99) {
       //Check if the cell to the right has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x + 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
@@ -279,7 +280,7 @@ if(mode == 0) {
       catFound = false;
     }
     //Check if the cell below is not visited and is connected to the current cell.
-    if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == 0) {
+    if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == -99) {
       //Check if the cell below has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y + 1 == cat_loc[x][1]) {
@@ -294,7 +295,7 @@ if(mode == 0) {
       catFound = false;
     }
     //Check if the cell to the left is not visited and is connected to the current cell.
-    if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == 0) {
+    if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == -99) {
       //Check if the cell to the left has a cat in it.
       for(int x = 0; x < cats; x++) {
         if(cell_x - 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
@@ -330,11 +331,10 @@ if(mode == 0) {
           printf("(%d, %d) <- ", at % size_X, at / size_Y);
         }
         emptyStack();
-        printf("START\n");
         return;
       }
     }
-    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
+    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
           catFound = true;
@@ -346,7 +346,7 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == 0) {
+    if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x + 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
@@ -358,7 +358,7 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == 0) {
+    if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y + 1 == cat_loc[x][1]) {
           catFound = true;
@@ -370,7 +370,7 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == 0) {
+    if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x - 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
@@ -396,7 +396,6 @@ if(mode == 0) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
-          printf("Here! %d\n", at);
         }
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter --;
@@ -410,7 +409,7 @@ if(mode == 0) {
       }
     }
     int g_cost = sqrt(pow(cell_x-mouse_x, 2) + pow(cell_y-mouse_y, 2));
-    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == 0) {
+    if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
           catFound = true;
@@ -422,7 +421,7 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == 0) {
+    if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x + 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
@@ -434,7 +433,7 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == 0) {
+    if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y + 1 == cat_loc[x][1]) {
           catFound = true;
@@ -446,7 +445,7 @@ if(mode == 0) {
       }
       catFound = false;
     }
-    if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == 0) {
+    if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x - 1 == cat_loc[x][0] && cell_y == cat_loc[x][1]) {
           catFound = true;
@@ -501,7 +500,7 @@ void emptyQueue() {
   }
 }
 
-/*void pEnqueue(int cell_index, int heu) {
+void pEnqueue(int cell_index, int heu) {
     if(back == graph_size-1) {
       back = -1;
     }
@@ -514,10 +513,10 @@ void emptyQueue() {
     pQueue[x][0] = cell_index;
     pQueue[x][1] = heu;
     queueItemCount++;
-} */
+}
 
 //Priority Queue
-void pEnqueue(int cell_index, int heu) {
+/*void pEnqueue(int cell_index, int heu) {
   int i = queueItemCount + front - 1;
   for (; (i > front && pQueue[i][1] > heu); i--) {
     pQueue[i+1][0] = pQueue[i][0];
@@ -526,7 +525,7 @@ void pEnqueue(int cell_index, int heu) {
   pQueue[i+1][0] = cell_index;
   pQueue[i+1][1] = heu;
   queueItemCount++;
-}
+}*/
 
 int pDequeue() {
   int cell_index = pQueue[front][0];
