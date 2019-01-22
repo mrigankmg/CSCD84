@@ -47,8 +47,10 @@
 int queue[graph_size];
 int pQueue[graph_size][2];
 int front = 0;
+int pfront = 0;
 int back = -1;
 int queueItemCount = 0;
+int pQueueItemCount = 0;
 int stack[graph_size];
 int top = -1;
 
@@ -209,6 +211,7 @@ visit_order[cell_x][cell_y]
   int cell_index, cell_x, cell_y;
   bool catFound = false;
   int visited[size_X][size_Y];
+  int visited2[size_X][size_Y];
   /*for(int x = 0; x < graph_size; x++) {
     path[x][0] = -1;
     path[x][1] = -1;
@@ -218,6 +221,7 @@ visit_order[cell_x][cell_y]
     for (int y = 0; y < size_Y; y ++) {
       visit_order[x][y] = 0;
       visited[x][y] = -99;
+      visited2[x][y] = -2;
     }
   }
   visited[mouse_x][mouse_y] = -1;
@@ -225,6 +229,15 @@ visit_order[cell_x][cell_y]
 //BFS
 if(mode == 0) {
   //Store cell_index within queue, first one being the intial mouse location.
+
+
+  
+  // Test stuff
+  int t = steps_to_cat(mouse_x, mouse_y, cat_loc[0][0], cat_loc[0][1], gr, visited2, -1);
+  printf("S: %d\n", t);
+  while(true);
+  //End Test Stuff
+
   enqueue(mouse_x + (mouse_y * size_X));
   while(!isQueueEmpty()){
     cell_index = dequeue();
@@ -239,6 +252,7 @@ if(mode == 0) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
         }
+        printf("%d\n", path_counter);
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter--;
           path[path_counter][0] = at % size_X;
@@ -281,7 +295,7 @@ if(mode == 0) {
     }
     //Check if the cell below is not visited and is connected to the current cell.
     if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == -99) {
-      //Check if the cell below has a cat in it.
+      //Check if the cell below has a cat next_stepin it.
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y + 1 == cat_loc[x][1]) {
           catFound = true;
@@ -386,7 +400,7 @@ if(mode == 0) {
 } else if (mode == 2) {
   //-----A*-----//
   pEnqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
-  while(!isQueueEmpty()){
+  while(!isPQueueEmpty()){
     cell_index = pDequeue();
     cell_x = cell_index % size_X;
     cell_y = cell_index / size_Y;
@@ -499,6 +513,7 @@ void emptyQueue() {
   }
 }
 
+/*
 void pEnqueue(int cell_index, int heu) {
     if(back == graph_size-1) {
       back = -1;
@@ -512,32 +527,36 @@ void pEnqueue(int cell_index, int heu) {
     pQueue[x][0] = cell_index;
     pQueue[x][1] = heu;
     queueItemCount++;
-}
+}*/
 
 //Priority Queue
-/*void pEnqueue(int cell_index, int heu) {
-  int i = queueItemCount + front - 1;
-  for (; (i > front && pQueue[i][1] > heu); i--) {
+bool isPQueueEmpty() {
+  return pQueueItemCount == 0;
+}
+
+void pEnqueue(int cell_index, int heu) {
+  int i = pQueueItemCount + pfront - 1;
+  for (; (i > pfront && pQueue[i][1] > heu); i--) {
     pQueue[i+1][0] = pQueue[i][0];
     pQueue[i+1][1] = pQueue[i][1];
   }
   pQueue[i+1][0] = cell_index;
   pQueue[i+1][1] = heu;
-  queueItemCount++;
-}*/
+  pQueueItemCount++;
+}
 
 int pDequeue() {
-  int cell_index = pQueue[front][0];
-  front++;
-  if(front == graph_size) {
-    front = 0;
+  int cell_index = pQueue[pfront][0];
+  pfront++;
+  if(pfront == graph_size) {
+    pfront = 0;
   }
-  queueItemCount--;
+  pQueueItemCount--;
   return cell_index;
 }
 
 void emptyPQueue() {
-  while (!isQueueEmpty()){
+  while (!isPQueueEmpty()){
     pDequeue();
   }
 }
@@ -579,7 +598,7 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
 		cheese_loc - Cheese locations
 		mouse_loc - Mouse location
 		cats - # of cats
-		cheeses - # of cheeses
+		cheeses - # of cheesesisQueueEmpty
 		gr - The graph's adjacency list for the maze
 
 		These arguments are as described in the search() function above
@@ -610,6 +629,50 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
 
 	Input arguments have the same meaning as in the H_cost() function above.
  */
+  int small_h = graph_size;
+  for (int i = 0;i < cheeses;i++) {
+    int curr_h = (pow(cheese_loc[i][0] - x, 2) + pow(cheese_loc[i][1] - y, 2));
+    if (small_h > curr_h) {
+      small_h = curr_h;
+    }
+  }
+  return (pow(x-mouse_loc[0][0], 2) + pow(y-mouse_loc[0][1], 2)) + small_h ;
 
- return(1);		// <-- Evidently you will need to update this.
+
 }
+
+int steps_to_cat(int curr_x, int curr_y, int cat_x, int cat_y, double gr[graph_size][4],int visited2[size_X][size_Y], int prev) {
+  int cell_index = curr_x + (curr_y * size_X);
+  visited2[curr_x][curr_y] = prev;
+  if (curr_x == cat_x && curr_y == cat_y) {
+    printf("exit\n");
+    int steps = 0;
+    for (int p=cell_index; p != -1; p=visited2[p % size_X][p / size_Y]) {
+      printf("%d: (%d, %d)\n", steps, p % size_X, p / size_Y);
+      steps++;
+    }
+    return steps;
+  } else {
+    if (gr[cell_index][0] == 1 && visited2[curr_x][curr_y-1] == -2) {
+      enqueue(curr_x + ((curr_y - 1) * size_X));
+      visited2[curr_x][curr_y-1] = cell_index;
+    }
+    if (gr[cell_index][1] == 1 && visited2[curr_x+1][curr_y] == -2) {
+      enqueue((curr_x + 1) + (curr_y * size_X));
+      visited2[curr_x+1][curr_y] = cell_index;
+    }
+    if (gr[cell_index][2] == 1 && visited2[curr_x][curr_y+1] == -2) {
+      enqueue(curr_x + ((curr_y + 1) * size_X));
+      visited2[curr_x][curr_y+1] = cell_index;
+    }
+    if (gr[cell_index][3] == 1 && visited2[curr_x-1][curr_y] == -2) {
+      enqueue((curr_x - 1) + (curr_y * size_X));
+      visited2[curr_x-1][curr_y] = cell_index;
+    }
+    int next_cell = dequeue();
+    steps_to_cat(next_cell % size_X, next_cell / size_Y, cat_x, cat_y, gr, visited2, cell_index);
+    
+  }
+}
+
+
