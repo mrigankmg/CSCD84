@@ -408,7 +408,6 @@ if(mode == 0) {
         return;
       }
     }
-    int g_cost = sqrt(pow(cell_x-mouse_x, 2) + pow(cell_y-mouse_y, 2));
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
@@ -416,7 +415,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x + ((cell_y-1) * size_X), g_cost + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + ((cell_y-1) * size_X), heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
@@ -428,7 +427,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x + 1 + (cell_y * size_X), g_cost + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + 1 + (cell_y * size_X), heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x+1][cell_y] = cell_index;
       }
       catFound = false;
@@ -440,7 +439,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x + ((cell_y+1) * size_X), g_cost + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + ((cell_y+1) * size_X), heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x][cell_y+1] = cell_index;
       }
       catFound = false;
@@ -452,7 +451,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x - 1 + (cell_y * size_X), g_cost + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x - 1 + (cell_y * size_X), heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
         visited[cell_x-1][cell_y] = cell_index;
       }
       catFound = false;
@@ -587,12 +586,12 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
  */
   int small_h = graph_size;
   for (int i = 0;i < cheeses;i++) {
-    int curr_h = sqrt(pow(cheese_loc[i][0] - x, 2) + pow(cheese_loc[i][1] - y, 2));
+    int curr_h = (pow(cheese_loc[i][0] - x, 2) + pow(cheese_loc[i][1] - y, 2));
     if (small_h > curr_h) {
       small_h = curr_h;
     }
   }
-  return small_h;
+  return (pow(x-mouse_loc[0][0], 2) + pow(y-mouse_loc[0][1], 2)) + small_h;
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
