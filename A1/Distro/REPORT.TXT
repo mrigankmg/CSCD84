@@ -14,11 +14,11 @@ Student Name 2 (last, first):
 
 Student number 1: 1001309014
 
-Student number 2:
+Student number 2: 1000637395
 
 UTORid 1: mehtamri
 
-UTORid 2:
+UTORid 2: make2
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
@@ -26,7 +26,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plagarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _Mrigank Mehta_	_(student 2 name here)_
+	Signed: _Mrigank Mehta_	_Ewen Mak_
 
 
 (-5 marks for failing to provide the identifying
@@ -67,13 +67,13 @@ doesn't work, or what problems exist.
 
 		Complete/Working	Partial		Not done
 
-DFS
+DFS       x
 
-BFS
+BFS       x
 
-A*
+A*        x
 
-H
+H         x
 
 H_no_cats
 
