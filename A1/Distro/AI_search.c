@@ -208,10 +208,6 @@ visit_order[cell_x][cell_y]
   int visit_counter = 0;
   int cell_index, cell_x, cell_y;
   int visited[size_X][size_Y];
-  /*for(int x = 0; x < graph_size; x++) {
-    path[x][0] = -1;
-    path[x][1] = -1;
-  }*/
   //Reset visited and visit_order values for every single iteration of the searches.
   for(int x = 0; x < size_X; x++) {
     for (int y = 0; y < size_Y; y ++) {
@@ -348,26 +344,24 @@ if(mode == 0) {
         return;
       }
     }*/
-    int gn = pow(curr_cost, 2);
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
-        pEnqueue(cell_x + ((cell_y-1) * size_X), gn + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
+        pEnqueue(cell_x + ((cell_y-1) * size_X), curr_cost + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x][cell_y-1] = cell_index;
     }
     if(gr[cell_index][1] == 1 && visited[cell_x+1][cell_y] == -99 && !catFound(cell_x+1, cell_y, cats, cat_loc)) {
-        pEnqueue(cell_x + 1 + (cell_y * size_X), gn + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
+        pEnqueue(cell_x + 1 + (cell_y * size_X), curr_cost + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x+1][cell_y] = cell_index;
     }
     if(gr[cell_index][2] == 1 && visited[cell_x][cell_y+1] == -99 && !catFound(cell_x, cell_y+1, cats, cat_loc)) {
-        pEnqueue(cell_x + ((cell_y+1) * size_X), gn + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
+        pEnqueue(cell_x + ((cell_y+1) * size_X), curr_cost + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x][cell_y+1] = cell_index;
     }
     if(gr[cell_index][3] == 1 && visited[cell_x-1][cell_y] == -99 && !catFound(cell_x-1, cell_y, cats, cat_loc)) {
-        pEnqueue(cell_x - 1 + (cell_y * size_X), gn + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
+        pEnqueue(cell_x - 1 + (cell_y * size_X), curr_cost + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x-1][cell_y] = cell_index;
     }
   }
 }
-printf("No path found, standing still.\n============\n");
 for(int i = 0; i < 11; i++) {
   path[i][0] = mouse_x;
   path[i][1] = mouse_y;
@@ -545,7 +539,7 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
 
   int mouse_x = mouse_loc[0][0];
   int mouse_y = mouse_loc[0][1];
-  int steps = 0;
+  int steps[cats];
   for (int i = 0; i < cats; i++) {
     int visited[size_X][size_Y];
     for(int x = 0; x < size_X; x ++) {
@@ -553,6 +547,7 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
         visited[x][y] = -99;
       }
     }
+    steps[i] = 0;
     enqueue(mouse_x + (mouse_y * size_X));
     visited[mouse_x][mouse_y] = -1;
     while(!isQueueEmpty()){
@@ -561,7 +556,7 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
       int cell_y = cell_index / size_Y;
       if(cell_x == cat_loc[i][0] && cell_y == cat_loc[i][1]) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          steps++;
+          steps[i]++;
         }
         emptyQueue();
         break;
@@ -589,7 +584,20 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
     }
   }
 
-  printf("%d\n", steps);
+  int total_cat_heu = 0;
+  for (int i=0; i<cats; i++) {
+    if (steps[i] < 2) {
+      total_cat_heu = total_cat_heu + (steps[i] * 10);
+    } else if (steps[i] < 5) {
+      total_cat_heu = total_cat_heu + (steps[i] * 5);
+    } else if (steps[i] < 10) {
+      total_cat_heu = total_cat_heu + (steps[i] * 2);
+    } else if (steps[i] < 20) {
+      total_cat_heu = total_cat_heu + (steps[i] * 1);
+    } else {
+      total_cat_heu = total_cat_heu + (steps[i] * 0.1);
+    }
+  }
 
-   return small_h - pow(steps,2);
+ return sqrt(total_cat_heu * 1.5) - (small_h * 1.1);
 }
