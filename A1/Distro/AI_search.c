@@ -47,7 +47,7 @@
 int queue[graph_size];
 int pQueue[graph_size][3];
 int front = 0;
-int pfront = 0;
+int pFront = 0;
 int queueItemCount = 0;
 int pQueueItemCount = 0;
 int stack[graph_size];
@@ -426,14 +426,14 @@ void emptyQueue() {
 //Priority Queue
 bool isPQueueEmpty() {
   if(pQueueItemCount == 0) {
-    pfront = 0;
+    pFront = 0;
   }
   return pQueueItemCount == 0;
 }
 
 void pEnqueue(int cell_index, int heu, int cost) {
-  int i = pQueueItemCount + pfront - 1;
-  for (; (i > pfront && pQueue[i][1] > heu); i--) {
+  int i = pQueueItemCount + pFront - 1;
+  for (; (i > pFront && pQueue[i][1] > heu); i--) {
     pQueue[i+1][0] = pQueue[i][0];
     pQueue[i+1][1] = pQueue[i][1];
     pQueue[i+1][2] = pQueue[i][2];
@@ -445,12 +445,12 @@ void pEnqueue(int cell_index, int heu, int cost) {
 }
 
 int pGetCost() {
-  return pQueue[pfront][2];
+  return pQueue[pFront][2];
 }
 
 int pDequeue() {
-  int cell_index = pQueue[pfront][0];
-  pfront++;
+  int cell_index = pQueue[pFront][0];
+  pFront++;
   pQueueItemCount--;
   return cell_index;
 }
