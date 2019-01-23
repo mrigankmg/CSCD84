@@ -48,7 +48,6 @@ int queue[graph_size];
 int pQueue[graph_size][3];
 int front = 0;
 int pfront = 0;
-int back = -1;
 int queueItemCount = 0;
 int pQueueItemCount = 0;
 int stack[graph_size];
@@ -484,17 +483,12 @@ path[1][1] = mouse_y;
 bool isQueueEmpty() {
   if(queueItemCount == 0) {
     front = 0;
-    back = -1;
   }
   return queueItemCount == 0;
 }
 
 void enqueue(int cell_index) {
-    if(back == graph_size-1) {
-      back = -1;
-    }
-    back++;
-    queue[back] = cell_index;
+    queue[queueItemCount + front] = cell_index;
     queueItemCount++;
 }
 
@@ -639,14 +633,13 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
 
 	Input arguments have the same meaning as in the H_cost() function above.
  */
-  /*int small_h = graph_size;
+  int small_h = graph_size;
   for (int i = 0;i < cheeses;i++) {
     int curr_h = (pow(cheese_loc[i][0] - x, 2) + pow(cheese_loc[i][1] - y, 2));
     if (small_h > curr_h) {
       small_h = curr_h;
     }
   }
-  return (pow(x-mouse_loc[0][0], 2) + pow(y-mouse_loc[0][1], 2)) + small_h ;*/
 
   int mouse_x = mouse_loc[0][0];
   int mouse_y = mouse_loc[0][1];
@@ -696,9 +689,7 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
 
   printf("%d\n", steps);
 
-   return 0 - steps;
-
-
+   return small_h - pow(steps,2);
 }
 
 /*int steps_to_cat(int curr_x, int curr_y, int cat_x, int cat_y, double gr[graph_size][4],int visited2[size_X][size_Y], int prev) {
