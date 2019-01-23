@@ -206,10 +206,8 @@ visit_order[cell_x][cell_y]
   int mouse_x = mouse_loc[0][0];
   int mouse_y = mouse_loc[0][1];
   int visit_counter = 0;
-  int path_counter = 0;
   int cell_index, cell_x, cell_y;
   int visited[size_X][size_Y];
-  int visited2[size_X][size_Y];
   /*for(int x = 0; x < graph_size; x++) {
     path[x][0] = -1;
     path[x][1] = -1;
@@ -219,7 +217,6 @@ visit_order[cell_x][cell_y]
     for (int y = 0; y < size_Y; y ++) {
       visit_order[x][y] = 0;
       visited[x][y] = -99;
-      visited2[x][y] = -2;
     }
   }
   visited[mouse_x][mouse_y] = -1;
@@ -234,6 +231,10 @@ if(mode == 0) {
     cell_y = cell_index / size_Y;
     visit_counter++;
     visit_order[cell_x][cell_y] = visit_counter;
+    if(calculatePath(cell_x, cell_y, cheeses, cheese_loc, path, visited, emptyQueue) == 1) {
+      return;
+    }
+    /*
     //Check whether any cheese is at the location of the current expanded cell.
     for(int x = 0; x < cheeses; x++) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
@@ -241,17 +242,15 @@ if(mode == 0) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
         }
-        printf("%d\n", path_counter);
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter--;
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
         }
         emptyQueue();
-        printf("V: %d\n", visit_counter);
         return;
       }
-    }
+    }*/
     //Check if the cell above is not visited and is connected to the current cell.
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
         enqueue(cell_x + ((cell_y-1) * size_X));
@@ -282,7 +281,10 @@ if(mode == 0) {
     cell_y = cell_index / size_Y;
     visit_counter++;
     visit_order[cell_x][cell_y] = visit_counter;
-    for(int x = 0; x < cheeses; x++) {
+    if(calculatePath(cell_x, cell_y, cheeses, cheese_loc, path, visited, emptyStack) == 1) {
+      return;
+    }
+    /*for(int x = 0; x < cheeses; x++) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
           path_counter++;
@@ -291,12 +293,11 @@ if(mode == 0) {
           path_counter --;
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
-          printf("(%d, %d) <- ", at % size_X, at / size_Y);
         }
         emptyStack();
         return;
       }
-    }
+    }*/
     //Check if the cell above is not visited and is connected to the current cell.
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
         push(cell_x + ((cell_y-1) * size_X));
@@ -328,6 +329,10 @@ if(mode == 0) {
     cell_y = cell_index / size_Y;
     visit_counter++;
     visit_order[cell_x][cell_y] = visit_counter;
+    if(calculatePath(cell_x, cell_y, cheeses, cheese_loc, path, visited, emptyPQueue) == 1) {
+      return;
+    }
+    /*
     for(int x = 0; x < cheeses; x++) {
       if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
         for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
@@ -342,7 +347,7 @@ if(mode == 0) {
         emptyPQueue();
         return;
       }
-    }
+    }*/
     int gn = pow(curr_cost, 2);
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
         pEnqueue(cell_x + ((cell_y-1) * size_X), gn + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
@@ -363,10 +368,10 @@ if(mode == 0) {
   }
 }
 printf("No path found, standing still.\n============\n");
-path[0][0] = mouse_x;
-path[0][1] = mouse_y;
-path[1][0] = mouse_x;
-path[1][1] = mouse_y;
+for(int i = 0; i < 11; i++) {
+  path[i][0] = mouse_x;
+  path[i][1] = mouse_y;
+}
 }
 
 bool catFound(int x, int y, int cats, int cat_loc[10][2]) {
@@ -376,6 +381,26 @@ bool catFound(int x, int y, int cats, int cat_loc[10][2]) {
     }
   }
   return false;
+}
+
+int calculatePath(int x, int y, int cheeses, int cheese_loc[10][2], int path[graph_size][2],int visited[size_X][size_Y], void (*f)()) {
+  int path_counter = 0;
+  int cell_index = x + (y * size_X);
+  for(int i = 0; i < cheeses; i++) {
+    if(x == cheese_loc[i][0] && y == cheese_loc[i][1]) {
+      for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
+        path_counter++;
+      }
+      for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
+        path_counter --;
+        path[path_counter][0] = at % size_X;
+        path[path_counter][1] = at / size_Y;
+      }
+      (*f)();
+      return 1;
+    }
+  }
+  return 0;
 }
 
 //Queue

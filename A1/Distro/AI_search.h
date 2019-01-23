@@ -51,5 +51,6 @@ int pDequeue();
 void emptyPQueue();
 bool isPQueueEmpty();
 bool catFound(int x, int y, int cats, int cat_loc[10][2]);
+int calculatePath(int x, int y, int cheeses, int cheese_loc[10][2], int path[graph_size][2],int visited[size_X][size_Y], void (*f)());
 
 #endif
