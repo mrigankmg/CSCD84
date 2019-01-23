@@ -230,24 +230,7 @@ if(mode == 0) {
     if(calculatePath(cell_x, cell_y, cheeses, cheese_loc, path, visited, emptyQueue) == 1) {
       return;
     }
-    /*
-    //Check whether any cheese is at the location of the current expanded cell.
-    for(int x = 0; x < cheeses; x++) {
-      if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
-        //Count the number of steps in the path.
-        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          path_counter++;
-        }
-        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          path_counter--;
-          path[path_counter][0] = at % size_X;
-          path[path_counter][1] = at / size_Y;
-        }
-        emptyQueue();
-        return;
-      }
-    }*/
-    //Check if the cell above is not visited and is connected to the current cell.
+    //Check if the cell above is not visited and is connected to the current cel.
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
         enqueue(cell_x + ((cell_y-1) * size_X));
         visited[cell_x][cell_y-1] = cell_index;
@@ -280,20 +263,6 @@ if(mode == 0) {
     if(calculatePath(cell_x, cell_y, cheeses, cheese_loc, path, visited, emptyStack) == 1) {
       return;
     }
-    /*for(int x = 0; x < cheeses; x++) {
-      if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
-        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          path_counter++;
-        }
-        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          path_counter --;
-          path[path_counter][0] = at % size_X;
-          path[path_counter][1] = at / size_Y;
-        }
-        emptyStack();
-        return;
-      }
-    }*/
     //Check if the cell above is not visited and is connected to the current cell.
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
         push(cell_x + ((cell_y-1) * size_X));
@@ -328,22 +297,6 @@ if(mode == 0) {
     if(calculatePath(cell_x, cell_y, cheeses, cheese_loc, path, visited, emptyPQueue) == 1) {
       return;
     }
-    /*
-    for(int x = 0; x < cheeses; x++) {
-      if(cell_x == cheese_loc[x][0] && cell_y == cheese_loc[x][1]) {
-        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          path_counter++;
-        }
-        for(int at=cell_index; at != -1; at=visited[at % size_X][at / size_Y]) {
-          path_counter --;
-          path[path_counter][0] = at % size_X;
-          path[path_counter][1] = at / size_Y;
-        }
-        printf("(%d, %d)\n", visit_counter, curr_cost);
-        emptyPQueue();
-        return;
-      }
-    }*/
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99 && !catFound(cell_x, cell_y-1, cats, cat_loc)) {
         pEnqueue(cell_x + ((cell_y-1) * size_X), curr_cost + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x][cell_y-1] = cell_index;
@@ -368,6 +321,7 @@ for(int i = 0; i < 11; i++) {
 }
 }
 
+//Finds if there's a cat at given x and y
 bool catFound(int x, int y, int cats, int cat_loc[10][2]) {
   for(int i = 0; i < cats; i++) {
     if(x == cat_loc[i][0] && y == cat_loc[i][1]) {
@@ -377,6 +331,7 @@ bool catFound(int x, int y, int cats, int cat_loc[10][2]) {
   return false;
 }
 
+//Calculates path to the cheese
 int calculatePath(int x, int y, int cheeses, int cheese_loc[10][2], int path[graph_size][2],int visited[size_X][size_Y], void (*f)()) {
   int path_counter = 0;
   int cell_index = x + (y * size_X);
@@ -588,9 +543,11 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
   for (int i=0; i<cats; i++) {
     if (steps[i] < 2) {
       total_cat_heu = total_cat_heu + (steps[i] * 10);
-    } else if (steps[i] < 5) {
+    } else if (steps[i] < 4) {
+      total_cat_heu = total_cat_heu + (steps[i] * 7);
+    } else if (steps[i] < 8) {
       total_cat_heu = total_cat_heu + (steps[i] * 5);
-    } else if (steps[i] < 10) {
+    } else if (steps[i] < 13) {
       total_cat_heu = total_cat_heu + (steps[i] * 2);
     } else if (steps[i] < 20) {
       total_cat_heu = total_cat_heu + (steps[i] * 1);
@@ -599,5 +556,5 @@ int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int 
     }
   }
 
- return sqrt(total_cat_heu * 1.5) - (small_h * 1.1);
+  return sqrt(total_cat_heu)*1.5 - (small_h * 1.7);
 }

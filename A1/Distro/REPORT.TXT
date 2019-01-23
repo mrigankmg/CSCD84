@@ -10,7 +10,7 @@ ________________________________________________
 
 Student Name 1 (last, first): Mrigank Mehta
 
-Student Name 2 (last, first):
+Student Name 2 (last, first): Mak Ewen
 
 Student number 1: 1001309014
 
@@ -39,26 +39,53 @@ but explain carefully when needed.
 1 .- (1 marks) Of BFS and DFS, which search algorithm yields the best results? (i.e. which is more likely
      to get the mouse to the cheese safely before being eaten?)
 
+     BFS is more likely to get the mouse to the cheese safely before being eaten. This is mainly because at most times,
+     DFS runs into an infinite loop situation between paths.
+
 
 2 .- (1 marks) Does this mean that in general BFS is a better search algorithm? (yes/no and give reasons to
      support your answer based on your observations)
 
+     Both BFS, and DFS can find a path but BFS finds the shorter path compared to DFS. BFS is also great to find
+     multiple goals. On the other hand, DFS is great to find cycles in a graph. All in all, both have their pros and
+     cons. i.e. Either one of them could be better, given the situation.
+
 
 3 .- (2 marks) Describe the heuristic function you used for A* search. Why is this heuristic admissible?
 
+     The heuristic function we used for A* search calculates the Manhattan distance from the current expanded node, to the goal nodes.
+     It then gives higher priority to the closest (by Manhattan distance) goal. It is admissible because the manhattan distance is
+     always less than or equal to the cost (steps) to get to the goal.
+
 
 4 .- (1 marks) Explain how your heuristic function accounts for the presence of multiple cheeses.
+
+     It checks for the closest cheese by Manhattan distance, and picks that as the first goal to be reached.
 
 
 5 .- (1 marks) Is A* equivalent to BFS for this problem? or is it better/worse? explain your answer based on
      your observations.
 
+     A* is better for this problem in the sense that the number of visited nodes is less than that of BFS. However,
+     they both return the same path.
+
+
 6 .- (2 marks) Describe your heuristic function for A*-nokitty. How does it work? what factors are considered
      into the cost function? is it admissible (yes/no and why)?
+
+     Our heuristic function BFS's to every cat, thus finding the shortest path from the cat to the mouse. This
+     is taken into account when deciding which cell to expand first, prioritizing cells that move the mouse away from
+     the cats. The heuristic function is not admissible since there are cases where the optimal path goes through the cat,
+     but the path we find must go around the cat.
+
 
 7 .- (2 marks) What is the largest limitation of the search algorithms implemented in this assignment?
      (i.e. is there anything we are missing that could lead to a smarter mouse?) - this is
      a more or less open question, but we talked about it in lecture!
+
+     The largest limitation of the search algorithms implemented are that we lack the knowledge of how the cat actually moves.
+     Being able to smartly claculate/predict the movement of the cats would help us find a safer path to the goals,
+     thus making our mouse smarter.
 
 _____________________________________________________
 
@@ -67,15 +94,15 @@ doesn't work, or what problems exist.
 
 		Complete/Working	Partial		Not done
 
-DFS       x
+DFS         x
 
-BFS       x
+BFS         x
 
-A*        x
+A*          x
 
-H         x
+H           x
 
-H_no_cats
+H_no_cats   x
 
 _____________________________________________________
 
