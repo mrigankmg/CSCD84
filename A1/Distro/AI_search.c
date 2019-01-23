@@ -28,24 +28,24 @@
 % COMPLETE THIS TEXT BOX:
 %
 % 1) Student Name: Mrigank Mehta
-% 2) Student Name:
+% 2) Student Name: Ewen Mak
 %
 % 1) Student number: 1001309014
-% 2) Student number:
+% 2) Student number: 1000637395
 %
 % 1) UtorID mehtamri
-% 2) UtorID
+% 2) UtorID make2
 %
 % We hereby certify that the work contained here is our own
 %
-% Mrigank Mehta                    _____________________
+% Mrigank Mehta                    Ewen Mak
 % (sign with your name)            (sign with your name)
 ***********************************************************************/
 
 #include "AI_search.h"
 
 int queue[graph_size];
-int pQueue[graph_size][2];
+int pQueue[graph_size][3];
 int front = 0;
 int pfront = 0;
 int back = -1;
@@ -399,8 +399,9 @@ if(mode == 0) {
   }
 } else if (mode == 2) {
   //-----A*-----//
-  pEnqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+  pEnqueue(mouse_x + (mouse_y * size_X), heuristic(mouse_x, mouse_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), 0);
   while(!isPQueueEmpty()){
+    int curr_cost = pGetCost();
     cell_index = pDequeue();
     cell_x = cell_index % size_X;
     cell_y = cell_index / size_Y;
@@ -416,12 +417,12 @@ if(mode == 0) {
           path[path_counter][0] = at % size_X;
           path[path_counter][1] = at / size_Y;
         }
-        printf("(%d, %d) ", path[path_counter][0], path[path_counter][1]);
-        printf("%d\n", visit_counter);
+        printf("(%d, %d)\n", visit_counter, curr_cost);
         emptyPQueue();
         return;
       }
     }
+    int gn = pow(curr_cost, 2);
     if(gr[cell_index][0] == 1 && visited[cell_x][cell_y-1] == -99) {
       for(int x = 0; x < cats; x++) {
         if(cell_x == cat_loc[x][0] && cell_y - 1 == cat_loc[x][1]) {
@@ -429,7 +430,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x + ((cell_y-1) * size_X), heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + ((cell_y-1) * size_X), gn + heuristic(cell_x, cell_y-1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x][cell_y-1] = cell_index;
       }
       catFound = false;
@@ -441,7 +442,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x + 1 + (cell_y * size_X), heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + 1 + (cell_y * size_X), gn + heuristic(cell_x+1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x+1][cell_y] = cell_index;
       }
       catFound = false;
@@ -453,7 +454,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x + ((cell_y+1) * size_X), heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x + ((cell_y+1) * size_X), gn + heuristic(cell_x, cell_y+1, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x][cell_y+1] = cell_index;
       }
       catFound = false;
@@ -465,7 +466,7 @@ if(mode == 0) {
         }
       }
       if(!catFound) {
-        pEnqueue(cell_x - 1 + (cell_y * size_X), heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr));
+        pEnqueue(cell_x - 1 + (cell_y * size_X), gn + heuristic(cell_x-1, cell_y, cat_loc, cheese_loc, mouse_loc, cats, cheeses, gr), curr_cost+1);
         visited[cell_x-1][cell_y] = cell_index;
       }
       catFound = false;
@@ -531,18 +532,27 @@ void pEnqueue(int cell_index, int heu) {
 
 //Priority Queue
 bool isPQueueEmpty() {
+  if(pQueueItemCount == 0) {
+    pfront = 0;
+  }
   return pQueueItemCount == 0;
 }
 
-void pEnqueue(int cell_index, int heu) {
+void pEnqueue(int cell_index, int heu, int cost) {
   int i = pQueueItemCount + pfront - 1;
   for (; (i > pfront && pQueue[i][1] > heu); i--) {
     pQueue[i+1][0] = pQueue[i][0];
     pQueue[i+1][1] = pQueue[i][1];
+    pQueue[i+1][2] = pQueue[i][2];
   }
   pQueue[i+1][0] = cell_index;
   pQueue[i+1][1] = heu;
+  pQueue[i+1][2] = cost;
   pQueueItemCount++;
+}
+
+int pGetCost() {
+  return pQueue[pfront][2];
 }
 
 int pDequeue() {
@@ -610,7 +620,7 @@ int H_cost(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_lo
       small_h = curr_h;
     }
   }
-  return (pow(x-mouse_loc[0][0], 2) + pow(y-mouse_loc[0][1], 2)) + small_h;
+  return small_h;
 }
 
 int H_cost_nokitty(int x, int y, int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, double gr[graph_size][4])
