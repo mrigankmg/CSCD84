@@ -189,14 +189,14 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
            best_loc[0][0] = curr_loc[0][0];
            best_loc[0][1] = curr_loc[0][1];
          }
-         /*if(mode == 1) {
+         if(mode == 1) {
            if(alpha < eval) {
              alpha = eval;
            }
            if(beta <= alpha) {
              break;
            }
-         }*/
+         }
          minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
          curr_loc[0][0] = mouse_loc[0][0];
          curr_loc[0][1] = mouse_loc[0][1];
@@ -233,14 +233,14 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
          if(eval < minEval) {
            minEval = eval;
          }
-         /*if(mode == 1) {
+         if(mode == 1) {
            if(beta > eval) {
              beta = eval;
            }
            if(beta <= alpha) {
              break;
            }
-         }*/
+         }
          for(int x = 0; x < cats; x++) {
            curr_loc[x][0] = cat_loc[x][0];
            curr_loc[x][1] = cat_loc[x][1];
@@ -277,18 +277,43 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
-  double min_dist_to_cheese = calculateDistance(mouse_loc, cheese_loc, cheeses);
-  double min_dist_to_cat = calculateDistance(mouse_loc, cat_loc, cats);
+ double min_dist_to_cheese = calculateMinDistance(mouse_loc, cheese_loc, cheeses);
+ if(min_dist_to_cheese <= 2) {
+   min_dist_to_cheese *= 2;
+ } else if(min_dist_to_cheese <= 5) {
+   min_dist_to_cheese *= 1.7;
+ } else if(min_dist_to_cheese <= 8) {
+   min_dist_to_cheese = 1.5;
+ } else if(min_dist_to_cheese <= 10) {
+   min_dist_to_cheese *= 1.3;
+ } else if(min_dist_to_cheese <= 13) {
+   min_dist_to_cheese *= 1.2;
+ } else {
+   min_dist_to_cheese *= 1.1;
+ }
+ double min_dist_to_cat = calculateMinDistance(mouse_loc, cat_loc, cats);
+ if(min_dist_to_cat <= 2) {
+   min_dist_to_cat *= 5;
+ } else if(min_dist_to_cat <= 5) {
+   min_dist_to_cat *= 3;
+ } else if(min_dist_to_cat <= 8) {
+   min_dist_to_cat *= 2;
+ } else if(min_dist_to_cat <= 10) {
+   min_dist_to_cat *= 1.8;
+ } else if(min_dist_to_cat <= 13) {
+   min_dist_to_cat *= 1.6;
+ } else {
+   min_dist_to_cat *= 1.4;
+ }
 
   //farther distance to cheese means lower utility, closer means higher utility
   //closer distance to cat means lower utility, farther distance from cat means higher utility
-  double util = -1.2 * min_dist_to_cheese + 2 * min_dist_to_cat;
+  double util = min_dist_to_cheese - min_dist_to_cat;
 
   return util;
-  // <--- Obviously, this will be replaced by your computer utilities
 }
 
-double calculateDistance(int mouse_loc[1][2], int object_loc[10][2], int objects) {
+double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int objects) {
   double min_dist = INFINITY;
   for(int x = 0; x < objects; x++) {
     double curr_dist = sqrt(pow(object_loc[x][0] - mouse_loc[x][0], 2) + pow(object_loc[x][1] - mouse_loc[x][1], 2));
