@@ -162,10 +162,12 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
    }
    if(agentId == 0) {
      int curr_loc[1][2];
+     int best_loc[1][2];
      curr_loc[0][0] = mouse_loc[0][0];
      curr_loc[0][1] = mouse_loc[0][1];
      double maxEval = -INFINITY;
      for (int x = 0; x < 4; x++) {
+       printf("X = %d\n", x);
        if(gr[curr_loc[0][0] + ((curr_loc[0][1]) * size_X)][x] == 1) {
          if(x == 0 || x == 2) {
            curr_loc[0][1] += (x - 1);
@@ -177,11 +179,11 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
          double eval = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, curr_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
          if(eval > maxEval) {
            maxEval = eval;
-           path[0][0]=curr_loc[0][0];
-           path[0][1]=curr_loc[0][1];
+           best_loc[0][0] = curr_loc[0][0];
+           best_loc[0][1] = curr_loc[0][1];
          }
-         printf("Eval %d: %f\n", x, eval);
-         printf("Max Eval: %f\n", maxEval);
+         //printf("Eval %d: %f\n", x, eval);
+         //printf("Max Eval: %f\n", maxEval);
          if(mode == 1) {
            if(alpha < eval) {
              alpha = eval;
@@ -190,9 +192,18 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
              break;
            }
          }
-         minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = maxEval;
+         minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
          curr_loc[0][0] = mouse_loc[0][0];
          curr_loc[0][1] = mouse_loc[0][1];
+         printf("%d \n", depth);
+         if(depth == 0) {
+            printf("Depth 0 X = %d\n", x);
+         }
+         if(depth == 0 && x == 3) {
+           printf("Depth 0 X = 3\n");
+           path[0][0]=best_loc[0][0];
+           path[0][1]=best_loc[0][1];
+         }
        }
      }
      return maxEval;
