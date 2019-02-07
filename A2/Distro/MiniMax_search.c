@@ -205,8 +205,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
      if(depth == 0 && x == 4) {
        path[0][0] = best_loc[0][0];
        path[0][1] = best_loc[0][1];
-       printf("Path X: %d\n", path[0][0]);
-       printf("Path Y: %d\n", path[0][1]);
      }
      return maxEval;
    } else {
@@ -277,38 +275,35 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
- double min_dist_to_cheese = calculateMinDistance(mouse_loc, cheese_loc, cheeses);
- if(min_dist_to_cheese <= 2) {
-   min_dist_to_cheese *= 2;
- } else if(min_dist_to_cheese <= 5) {
-   min_dist_to_cheese *= 1.7;
- } else if(min_dist_to_cheese <= 8) {
-   min_dist_to_cheese = 1.5;
- } else if(min_dist_to_cheese <= 10) {
-   min_dist_to_cheese *= 1.3;
- } else if(min_dist_to_cheese <= 13) {
-   min_dist_to_cheese *= 1.2;
+ double cheese_factor = 25 - calculateMinDistance(mouse_loc, cheese_loc, cheeses);
+ if(cheese_factor >= 23) {
+   cheese_factor *= 3;
+ } else if(cheese_factor >= 20) {
+   cheese_factor *= 2.2;
+ } else if(cheese_factor >= 17) {
+   cheese_factor *= 2;
+ } else if(cheese_factor >= 15) {
+   cheese_factor *= 1.5;
  } else {
-   min_dist_to_cheese *= 1.1;
+   cheese_factor *= 1.3;
  }
- double min_dist_to_cat = calculateMinDistance(mouse_loc, cat_loc, cats);
- if(min_dist_to_cat <= 2) {
-   min_dist_to_cat *= 5;
- } else if(min_dist_to_cat <= 5) {
-   min_dist_to_cat *= 3;
- } else if(min_dist_to_cat <= 8) {
-   min_dist_to_cat *= 2;
- } else if(min_dist_to_cat <= 10) {
-   min_dist_to_cat *= 1.8;
- } else if(min_dist_to_cat <= 13) {
-   min_dist_to_cat *= 1.6;
+ double cat_factor = 25 - calculateMinDistance(mouse_loc, cat_loc, cats);
+ if(cat_factor >= 23) {
+   cat_factor *= 5;
+ } else if(cat_factor >= 20) {
+   cat_factor *= 3;
+ } else if(cat_factor >= 17) {
+   cat_factor = 1.5;
  } else {
-   min_dist_to_cat *= 1.4;
+   cat_factor = 0;
  }
+
+ printf("Cheese: %f", cheese_factor);
+ printf("Cat: %f", cat_factor);
 
   //farther distance to cheese means lower utility, closer means higher utility
   //closer distance to cat means lower utility, farther distance from cat means higher utility
-  double util = min_dist_to_cheese - min_dist_to_cat;
+  double util = cheese_factor - cat_factor;
 
   return util;
 }
