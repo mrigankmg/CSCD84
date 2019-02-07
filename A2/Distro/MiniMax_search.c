@@ -156,7 +156,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  ********************************************************************************************************/
 
  // Stub so that the code compiles/runs - This will be removed and replaced by your code!
-
    if(depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
      return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
    }
@@ -166,8 +165,16 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
      curr_loc[0][0] = mouse_loc[0][0];
      curr_loc[0][1] = mouse_loc[0][1];
      double maxEval = -INFINITY;
-     for (int x = 0; x < 4; x++) {
-       printf("X = %d\n", x);
+     int x = 0;
+     //Reset all minimax_cost values to 0
+     if(depth == 0 && x == 0) {
+       for(int i = 0; i < size_X; i++) {
+         for(int j = 0; j < size_Y; j++) {
+           minmax_cost[i][j] = 0;
+         }
+       }
+     }
+     for (x = 0; x < 4; x++) {
        if(gr[curr_loc[0][0] + ((curr_loc[0][1]) * size_X)][x] == 1) {
          if(x == 0 || x == 2) {
            curr_loc[0][1] += (x - 1);
@@ -182,29 +189,24 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
            best_loc[0][0] = curr_loc[0][0];
            best_loc[0][1] = curr_loc[0][1];
          }
-         //printf("Eval %d: %f\n", x, eval);
-         //printf("Max Eval: %f\n", maxEval);
-         if(mode == 1) {
+         /*if(mode == 1) {
            if(alpha < eval) {
              alpha = eval;
            }
            if(beta <= alpha) {
              break;
            }
-         }
+         }*/
          minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
          curr_loc[0][0] = mouse_loc[0][0];
          curr_loc[0][1] = mouse_loc[0][1];
-         printf("%d \n", depth);
-         if(depth == 0) {
-            printf("Depth 0 X = %d\n", x);
-         }
-         if(depth == 0 && x == 3) {
-           printf("Depth 0 X = 3\n");
-           path[0][0]=best_loc[0][0];
-           path[0][1]=best_loc[0][1];
-         }
        }
+     }
+     if(depth == 0 && x == 4) {
+       path[0][0] = best_loc[0][0];
+       path[0][1] = best_loc[0][1];
+       printf("Path X: %d\n", path[0][0]);
+       printf("Path Y: %d\n", path[0][1]);
      }
      return maxEval;
    } else {
@@ -231,14 +233,14 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
          if(eval < minEval) {
            minEval = eval;
          }
-         if(mode == 1) {
+         /*if(mode == 1) {
            if(beta > eval) {
              beta = eval;
            }
            if(beta <= alpha) {
              break;
            }
-         }
+         }*/
          for(int x = 0; x < cats; x++) {
            curr_loc[x][0] = cat_loc[x][0];
            curr_loc[x][1] = cat_loc[x][1];
@@ -280,12 +282,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
   //farther distance to cheese means lower utility, closer means higher utility
   //closer distance to cat means lower utility, farther distance from cat means higher utility
-
-  /*printf("Min Cheese: %f \n", -1.05 * min_dist_to_cheese);
-  printf("Min Cat: %f \n", 2 * min_dist_to_cat);*/
-  double util = -1.05 * min_dist_to_cheese + 2 * min_dist_to_cat;
-
-  //printf("Util val %f \n", util);
+  double util = -1.2 * min_dist_to_cheese + 2 * min_dist_to_cat;
 
   return util;
   // <--- Obviously, this will be replaced by your computer utilities
