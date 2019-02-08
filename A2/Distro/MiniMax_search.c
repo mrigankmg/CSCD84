@@ -27,6 +27,8 @@
 
 int prev_util = 0;
 
+int steps;
+
 double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta)
 {
  /*
@@ -159,29 +161,33 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
    if(depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
      return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
    }
+   //printf("%d\n", steps);
    if(agentId == 0) {
-     int curr_loc[1][2];
+     //int curr_loc[1][2];
      int best_loc[1][2];
-     curr_loc[0][0] = mouse_loc[0][0];
-     curr_loc[0][1] = mouse_loc[0][1];
+     //curr_loc[0][0] = mouse_loc[0][0];
+     //curr_loc[0][1] = mouse_loc[0][1];
      double maxEval = -INFINITY;
      int x = 0;
      //Reset all minimax_cost values to 0
-     if(depth == 0 && x == 0) {
+     if(depth == 0) {
        for(int i = 0; i < size_X; i++) {
          for(int j = 0; j < size_Y; j++) {
            minmax_cost[i][j] = 0;
          }
        }
+       alpha = -INFINITY;
+       beta = INFINITY;
      }
      for (x = 0; x < 4; x++) {
-       if(gr[curr_loc[0][0] + ((curr_loc[0][1]) * size_X)][x] == 1) {
+       if(gr[mouse_loc[0][0] + ((mouse_loc[0][1]) * size_X)][x] == 1) {
+         int curr_loc[1][2];
+         curr_loc[0][0] = mouse_loc[0][0];
+         curr_loc[0][1] = mouse_loc[0][1];
          if(x == 0 || x == 2) {
            curr_loc[0][1] += (x - 1);
-         } else if (x == 1) {
-           curr_loc[0][0] += 1;
          } else {
-           curr_loc[0][0] -= 1;
+           curr_loc[0][0] -= (x - 2);
          }
          double eval = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, curr_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
          if(eval > maxEval) {
@@ -191,38 +197,41 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
          }
          if(mode == 1) {
            if(alpha < eval) {
+             //printf("Does this \n");
              alpha = eval;
            }
            if(beta <= alpha) {
+             //printf("Breaks.... \n");
              break;
            }
          }
          minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
-         curr_loc[0][0] = mouse_loc[0][0];
-         curr_loc[0][1] = mouse_loc[0][1];
+         //curr_loc[0][0] = mouse_loc[0][0];
+         //curr_loc[0][1] = mouse_loc[0][1];
+         steps++;
        }
      }
      if(depth == 0 && x == 4) {
        path[0][0] = best_loc[0][0];
        path[0][1] = best_loc[0][1];
+       //printf("Path X = %d\n", path[0][0]);
+       //printf("Path Y = %d\n", path[0][1]);
      }
      return maxEval;
    } else {
      int curr_cat = agentId - 1;
-     int curr_loc[cats][2];
-     for(int x = 0; x < cats; x++) {
-       curr_loc[x][0] = cat_loc[x][0];
-       curr_loc[x][1] = cat_loc[x][1];
-     }
      double minEval = INFINITY;
      for (int x = 0; x < 4; x++) {
-       if(gr[curr_loc[curr_cat][0] + ((curr_loc[curr_cat][1]) * size_X)][x] == 1) {
+       if(gr[cat_loc[curr_cat][0] + ((cat_loc[curr_cat][1]) * size_X)][x] == 1) {
+         int curr_loc[cats][2];
+         for(int x = 0; x < cats; x++) {
+           curr_loc[x][0] = cat_loc[x][0];
+           curr_loc[x][1] = cat_loc[x][1];
+         }
          if(x == 0 || x == 2) {
            curr_loc[curr_cat][1] += (x - 1);
-         } else if (x == 1) {
-           curr_loc[curr_cat][0] += 1;
          } else {
-           curr_loc[curr_cat][0] -= 1;
+           curr_loc[curr_cat][0] -= (x - 2);
          }
          if(agentId == cats) {
            agentId = -1;
@@ -233,16 +242,19 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
          }
          if(mode == 1) {
            if(beta > eval) {
+             //printf("Does this \n");
              beta = eval;
            }
            if(beta <= alpha) {
+             //printf("Breaks.... \n");
              break;
            }
          }
-         for(int x = 0; x < cats; x++) {
+         /*for(int x = 0; x < cats; x++) {
            curr_loc[x][0] = cat_loc[x][0];
            curr_loc[x][1] = cat_loc[x][1];
-         }
+         }*/
+         steps++;
        }
      }
      return minEval;
@@ -275,31 +287,37 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
- double cheese_factor = 25 - calculateMinDistance(mouse_loc, cheese_loc, cheeses);
- if(cheese_factor >= 23) {
+ double cheese_factor = 50 - calculateMinDistance(mouse_loc, cheese_loc, cheeses);
+ if(cheese_factor >= 48) {
    cheese_factor *= 3;
- } else if(cheese_factor >= 20) {
+ } else if(cheese_factor >= 45) {
    cheese_factor *= 2.2;
- } else if(cheese_factor >= 17) {
+ } else if(cheese_factor >= 42) {
    cheese_factor *= 2;
- } else if(cheese_factor >= 15) {
+ } else if(cheese_factor >= 40) {
    cheese_factor *= 1.5;
  } else {
    cheese_factor *= 1.3;
  }
- double cat_factor = 25 - calculateMinDistance(mouse_loc, cat_loc, cats);
- if(cat_factor >= 23) {
+ double cat_factor = 50 - calculateMinDistance(mouse_loc, cat_loc, cats);
+ if(cat_factor >= 48) {
    cat_factor *= 5;
- } else if(cat_factor >= 20) {
+ } else if(cat_factor >= 45) {
    cat_factor *= 3;
- } else if(cat_factor >= 17) {
+ } else if(cat_factor >= 42) {
+   cat_factor = 2;
+ } else if(cat_factor >= 40){
    cat_factor = 1.5;
  } else {
    cat_factor = 0;
  }
 
- printf("Cheese: %f", cheese_factor);
- printf("Cat: %f", cat_factor);
+ if(cheese_factor == cat_factor) {
+   cat_factor += 1;
+ }
+
+ //printf("Cheese Factor: %f\n", cheese_factor);
+ //printf("Cat Factor: %f\n", cat_factor);
 
   //farther distance to cheese means lower utility, closer means higher utility
   //closer distance to cat means lower utility, farther distance from cat means higher utility
