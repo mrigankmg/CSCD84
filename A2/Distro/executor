@@ -1,17 +1,28 @@
 #!/bin/bash
-./MiniMax_search 2415 1 4 1 10 1
-./MiniMax_search 2415 1 7 1 10 1
-./MiniMax_search 2415 1 9 1 10 1
-./MiniMax_search 2415 1 10 1 10 1
-./MiniMax_search 2415 2 10 1 10 1
-./MiniMax_search 2415 2 8 1 10 1
-./MiniMax_search 2415 2 5 1 10 1
-./MiniMax_search 2415 2 3 1 10 1
-./MiniMax_search 215 1 4 1 10 1
-./MiniMax_search 215 1 7 1 10 1
-./MiniMax_search 215 1 9 1 10 1
-./MiniMax_search 215 1 10 1 10 1
-./MiniMax_search 35 1 10 1 10 1
-./MiniMax_search 35 1 8 1 10 1
-./MiniMax_search 35 1 5 1 10 1
-./MiniMax_search 35 1 3 1 10 1
+#Seed randomizer
+for ((n=0;n<10;n++))
+do
+SEED=$(shuf -i 1-50000 -n 1);
+
+#Cat randomizer
+CATS=$(shuf -i 1-5 -n 1);
+
+#Cheese randomizer
+CHEESES=$(shuf -i 1-10 -n 1);
+
+#Mode randomizer
+MODE=$(shuf -i 0-1 -n 1);
+
+#Depth randomizer
+DEPTH=$(shuf -i 6-15 -n 1);
+
+#Difficulty randomizer
+DIFFICULTY=$(shuf -i 1-10 -n 1);
+DIFFICULTY=$(python -c "print($DIFFICULTY/10.0)");
+
+echo "======================================";
+echo "./MiniMax_search $SEED $CATS $CHEESES $MODE $DEPTH $DIFFICULTY";
+echo "======================================";
+
+./MiniMax_search $SEED $CATS $CHEESES $MODE $DEPTH $DIFFICULTY;
+done
