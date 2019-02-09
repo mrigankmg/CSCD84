@@ -194,9 +194,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                     maxEval = eval;
                     best_loc[0] = curr_loc[0][0];
                     best_loc[1] = curr_loc[0][1];
-                    //printf("Max: %f\n", maxEval);
-                    //printf("Best X: %d\n", best_loc[0]);
-                    //printf("Best Y: %d\n", best_loc[1]);
                 }
                 if(mode == 1) {
                     if(alpha < eval) {
@@ -212,6 +209,10 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
         if(depth == 0) {
             path[0][0] = best_loc[0];
             path[0][1] = best_loc[1];
+            /*printf("Max: %f\n", maxEval);
+            printf("Best X: %d\n", best_loc[0]);
+            printf("Best Y: %d\n", best_loc[1]);
+            printf("Depth: %d\n", depth);*/
         }
         return maxEval;
     } else {
@@ -277,10 +278,11 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
     double mouse_to_cells_dist[graph_size];
     BFS (gr, mouse_loc[0][0] + (mouse_loc[0][1] * size_X), mouse_to_cells_dist);
+    double util = 0;
 
-    double min_dist = calculateMinDistance(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist);
-    double cheese_factor = graph_size - min_dist;
-    if(cheese_factor >= graph_size - 5) {
+    double min_cheese_dist = calculateMinDistance(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist);
+    //double cheese_factor = graph_size - min_cheese_dist;
+    /*if(cheese_factor >= graph_size - 5) {
         cheese_factor *= 2;
     } else if(cheese_factor >= graph_size - 8) {
         cheese_factor *= 1.7;
@@ -290,40 +292,82 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         cheese_factor *= 1.2;
     } else {
         cheese_factor *= 1.1;
+    }*/
+
+    double min_cat_dist = calculateMinDistance(mouse_loc, cat_loc, cats, mouse_to_cells_dist);
+
+    if(min_cheese_dist == 0 || min_cat_dist == 0) {
+        if(min_cheese_dist == 0) {
+            util = 1000;
+        } else {
+            util = -1200;
+        }
+    } else {
+        util = (1/min_cheese_dist)*25 - min_cat_dist*0.2;
+        if (min_cheese_dist <= 5) {
+            util += 8;
+        }
+        if (min_cat_dist - min_cheese_dist >= 0) {
+            util += 1;
+        }
+        if (min_cat_dist - min_cheese_dist >= 4) {
+            util += 4;
+        }
+        if (min_cat_dist - min_cheese_dist >= 8) {
+            util += 2;
+        }
+        if (min_cat_dist - min_cheese_dist <= -2) {
+            util -= 2;
+        }
+        if (min_cat_dist - min_cheese_dist <= -6) {
+            util -= 3;
+        }
+        if (min_cat_dist - min_cheese_dist <= -11) {
+            util -= 4;
+        }
     }
 
-    min_dist = calculateMinDistance(mouse_loc, cat_loc, cats, mouse_to_cells_dist);;
-    double cat_factor = graph_size - min_dist;
+    /*double cat_factor = graph_size - min_cat_dist;
     if(cat_factor >= graph_size - 5) {
         cat_factor *= 3;
+        cheese_factor *= 1.1;
     } else if(cat_factor >= graph_size - 8) {
         cat_factor *= 2.5;
+        cheese_factor *= 1.2;
     } else if(cat_factor >= graph_size - 12) {
         cat_factor *= 2;
+        cheese_factor *= 1.5;
     } else if(cat_factor >= graph_size - 15) {
         cat_factor *= 1.5;
+        cheese_factor *= 1.7;
     } else {
         cat_factor = 0;
+        cheese_factor *= 2;
     }
-
-    double depth_factor = 1.5 * (max_depth - depth);
+    cat_factor = 0;*/
+    double depth_factor = 1.5 * 1/(1 + depth);
 
     //farther distance to cheese means lower utility, closer means higher utility
     //closer distance to cat means lower utility, farther distance from cat means higher utility
-    double util = cheese_factor - cat_factor;
+    //double util = cheese_factor - cat_factor;
 
-    if(cheese_factor == graph_size * 2) {
+    /*if(min_cheese_dist == 0) {
         util = 3000;
     }
-    if(cat_factor == graph_size * 3) {
+    if(min_cat_dist == 0) {
         util = -4000;
-    }
+    }*/
 
     if(util < 0) {
         depth_factor *= -1;
     }
 
     util += depth_factor;
+
+    if(util == 0) {
+        util = -1;
+    }
+
     //printf("%f\n", util);
 
     return util;
