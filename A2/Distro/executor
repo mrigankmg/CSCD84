@@ -1,7 +1,10 @@
 #!/bin/bash
-#Seed randomizer
+
+./compile.sh
+
 for ((n=0;n<10;n++))
 do
+#Seed randomizer
 SEED=$(shuf -i 1-50000 -n 1);
 
 #Cat randomizer
