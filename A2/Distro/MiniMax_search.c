@@ -281,63 +281,63 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     double min_dist = calculateMinDistance(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist);
     double cheese_factor = graph_size - min_dist;
     if(cheese_factor >= graph_size - 5) {
-      cheese_factor *= 2;
+        cheese_factor *= 2;
     } else if(cheese_factor >= graph_size - 8) {
-      cheese_factor *= 1.7;
+        cheese_factor *= 1.7;
     } else if(cheese_factor >= graph_size - 12) {
-      cheese_factor *= 1.5;
+        cheese_factor *= 1.5;
     } else if(cheese_factor >= graph_size - 15) {
-      cheese_factor *= 1.2;
+        cheese_factor *= 1.2;
     } else {
-      cheese_factor *= 1.1;
+        cheese_factor *= 1.1;
     }
 
     min_dist = calculateMinDistance(mouse_loc, cat_loc, cats, mouse_to_cells_dist);;
     double cat_factor = graph_size - min_dist;
     if(cat_factor >= graph_size - 5) {
-      cat_factor *= 3;
+        cat_factor *= 3;
     } else if(cat_factor >= graph_size - 8) {
-      cat_factor *= 2.5;
+        cat_factor *= 2.5;
     } else if(cat_factor >= graph_size - 12) {
-      cat_factor *= 2;
-    } else if(cat_factor >= graph_size - 15){
-      cat_factor *= 1.5;
+        cat_factor *= 2;
+    } else if(cat_factor >= graph_size - 15) {
+        cat_factor *= 1.5;
     } else {
-      cat_factor = 0;
+        cat_factor = 0;
     }
 
-     double depth_factor = 1.5 * (max_depth - depth);
+    double depth_factor = 1.5 * (max_depth - depth);
 
-     //farther distance to cheese means lower utility, closer means higher utility
-     //closer distance to cat means lower utility, farther distance from cat means higher utility
-     double util = cheese_factor - cat_factor;
+    //farther distance to cheese means lower utility, closer means higher utility
+    //closer distance to cat means lower utility, farther distance from cat means higher utility
+    double util = cheese_factor - cat_factor;
 
-     if(cheese_factor == graph_size * 2) {
-       util = 3000;
-     }
-     if(cat_factor == graph_size * 3) {
-       util = -4000;
-     }
+    if(cheese_factor == graph_size * 2) {
+        util = 3000;
+    }
+    if(cat_factor == graph_size * 3) {
+        util = -4000;
+    }
 
-     if(util < 0) {
-       depth_factor *= -1;
-     }
+    if(util < 0) {
+        depth_factor *= -1;
+    }
 
-     util += depth_factor;
-     //printf("%f\n", util);
+    util += depth_factor;
+    //printf("%f\n", util);
 
     return util;
 }
 
 double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int objects, double distances[graph_size]) {
-  double min_dist = INFINITY;
-  for(int x = 0; x < objects; x++) {
-    int object_index = object_loc[x][0] + (object_loc[x][1] * size_X);
-    if(distances[object_index] < min_dist) {
-      min_dist = distances[object_index];
+    double min_dist = INFINITY;
+    for(int x = 0; x < objects; x++) {
+        int object_index = object_loc[x][0] + (object_loc[x][1] * size_X);
+        if(distances[object_index] < min_dist) {
+            min_dist = distances[object_index];
+        }
     }
-  }
-  return min_dist;
+    return min_dist;
 }
 
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses) {
@@ -364,10 +364,10 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
 }
 
 bool isQueueEmpty() {
-  if(queue_size == 0) {
-    front = 0;
-  }
-  return queue_size == 0;
+    if(queue_size == 0) {
+        front = 0;
+    }
+    return queue_size == 0;
 }
 
 void enqueue(int cell) {
@@ -376,31 +376,31 @@ void enqueue(int cell) {
 }
 
 int dequeue() {
-  int cell = queue[front];
-  front++;
-  if(front == graph_size) {
-    front = 0;
-  }
-  queue_size--;
-  return cell;
+    int cell = queue[front];
+    front++;
+    if(front == graph_size) {
+        front = 0;
+    }
+    queue_size--;
+    return cell;
 }
 
 void BFS(double gr[graph_size][4], int source_index, double arrayToAssign[graph_size]) {
-  for(int x = 0; x < graph_size; x++) {
-    arrayToAssign[x] = INFINITY;
-  }
-  arrayToAssign[source_index] = 0;
-  enqueue(source_index);
-  while (!isQueueEmpty()) {
-    int curr = dequeue();
-    int curr_x = curr % size_X;
-    int curr_y = curr / size_Y;
-    for(int x = 0; x < 4; x++) {
-      int child = curr_x - ((x - 2) % 2) + ((curr_y + ((x - 1) % 2)) * size_X);
-      if(gr[curr][x] == 1 && arrayToAssign[child] == INFINITY) {
-        arrayToAssign[child] = arrayToAssign[curr] + 1;
-        enqueue(child);
-      }
+    for(int x = 0; x < graph_size; x++) {
+        arrayToAssign[x] = INFINITY;
     }
-  }
+    arrayToAssign[source_index] = 0;
+    enqueue(source_index);
+    while (!isQueueEmpty()) {
+        int curr = dequeue();
+        int curr_x = curr % size_X;
+        int curr_y = curr / size_Y;
+        for(int x = 0; x < 4; x++) {
+            int child = curr_x - ((x - 2) % 2) + ((curr_y + ((x - 1) % 2)) * size_X);
+            if(gr[curr][x] == 1 && arrayToAssign[child] == INFINITY) {
+                arrayToAssign[child] = arrayToAssign[curr] + 1;
+                enqueue(child);
+            }
+        }
+    }
 }
