@@ -36,7 +36,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses);
 // If you need to add any function prototypes yourself, you can do so *below* this line.
 
-double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int objects);
-
+double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int objects, double distances[graph_size]);
+void enqueue(int cell);
+int dequeue();
+bool isQueueEmpty();
+void BFS(double gr[graph_size][4], int source_index, double arrayToAssign[graph_size]);
 
 #endif

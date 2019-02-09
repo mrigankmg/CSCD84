@@ -1,6 +1,6 @@
 CSC D84 - Artificial Intelligence
 
-Assignment 2 - MiniMax and Game Trees 
+Assignment 2 - MiniMax and Game Trees
 
 This assignment is worth:
 
@@ -10,15 +10,15 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): Mehta, Mrigank
 
 Student Name 2 (last, first):
 
-Student number 1:
+Student number 1: 1001309014
 
 Student number 2:
 
-UTORid 1:
+UTORid 1: mehtamri
 
 UTORid 2:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _(student 1 name here)__	_(student 2 name here)__
+	Signed: _Mrigank Mehta_	_(student 2 name here)__
 
 
 (-5 marks for failing to provide the identifying
@@ -46,7 +46,7 @@ but explain carefully when needed.
 
 2 .- (2 marks) Ignoring computation time, what is the effect of
      search depth (number of turns) on the chances of the mouse
-     winning the game. 
+     winning the game.
 
 3 .- (2 marks) What situations will cause your mouse to lose?
      can these be fixed either with the utility function, or
@@ -68,7 +68,7 @@ _____________________________________________________
 Mark with an 'x' where appropriate. If something is only
 working partially, briefly describe what works, what
 doesn't work, or what problems exist.
-	
+
 	Complete/Working	Partial		Not done
 
 Utility
@@ -84,7 +84,7 @@ Marking:
 
 (10 marks) Implemented a non-trivial, clever, and
            effective utility function. It allows the
-           mouse to win the game often. 
+           mouse to win the game often.
 
 (10 marks) Correctly implementing MiniMax. The algorithm
            should produce the expected behaviour. The
@@ -95,7 +95,7 @@ Marking:
 (10 marks) Implemented alpha-beta pruning. The algorithm
            significantly reduces the amount of search
            while producing identical results as those
-           from standard MiniMax 
+           from standard MiniMax
 
 (15 marks) Competitive (TA assigned) based on how smart
            your mouse is (this is related to your
@@ -106,5 +106,3 @@ Marking:
 (2 bonus)  Bonus!
 
 Total for A2:       / out of 60
-
-
