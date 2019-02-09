@@ -1,3 +1,5 @@
 AI_search.o
 AI_search
+MiniMax_search.o
+MiniMax_search
 .DS_Store
