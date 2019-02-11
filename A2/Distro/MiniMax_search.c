@@ -28,8 +28,8 @@
 int queue[graph_size];
 int front = 0;
 int queue_size = 0;
-int max_depth;
 int prev_path[2];
+bool analyzedDeadEnd[graph_size];
 
 double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta)
 {
@@ -160,7 +160,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
     ********************************************************************************************************/
 
     if(depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses) == 1) {
-        max_depth = maxDepth;
         return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
     }
     /*if(depth == 0) {
@@ -285,22 +284,24 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     BFS (gr, mouse_index, cat_loc, cats, cheese_loc, cheeses, mouse_to_cells_dist);
     double util = 0;
 
-    double min_cheese_dist = calculateMinDistance(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist);
+    double min_cheese[2] = { INFINITY, INFINITY };
+    calculateMin(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist, min_cheese, true);
 
-    double min_cat_dist = calculateMinDistance(mouse_loc, cat_loc, cats, mouse_to_cells_dist);
+    double min_cat[2] = { INFINITY, INFINITY };
+    calculateMin(mouse_loc, cat_loc, cats, mouse_to_cells_dist, min_cat, false);
 
-    if(min_cheese_dist == 0 || min_cat_dist == 0) {
+    if(min_cheese[1] == 0 || min_cat[1] == 0) {
         //If mouse eats cheese then drastically increase util, or if
         //cat eats mouse then drastically decrease util.
-        if(min_cheese_dist == 0) {
+        if(min_cheese[1] == 0) {
             util = 1000;
         }
-        if(min_cat_dist == 0) {
+        if(min_cat[1] == 0) {
             util = -1200;
         }
     } else {
-        util = (1/min_cheese_dist)*25 - min_cat_dist*0.03;
-        double min_cat_cheese_diff_dist = min_cat_dist - min_cheese_dist;
+        util = (1/min_cheese[1])*25 - min_cat[1]*0.03;
+        double min_cat_cheese_diff_dist = min_cat[1] - min_cheese[1];
         //If cat is farther from mouse than cheese, then add to the utility
         //depending on how far the cat is from the mouse.
         if (min_cat_cheese_diff_dist >= 0) {
@@ -325,12 +326,36 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         }
         //If mouse is within 5 steps of getting closest cheese, then add more to
         //the utility.
-        if (min_cheese_dist <= 5) {
+        if (min_cheese[1] <= 5) {
             util += 8;
         }
     }
-    //printf("Cheese Dist: %f\n", min_cheese_dist);
-    //printf("Cat Dist: %f\n", min_cat_dist);
+
+    //If the mouse is at a "dead-end" i.e. square with three walls around it.
+    if((gr[mouse_index][3] == 0 && gr[mouse_index][0] == 0 && gr[mouse_index][1] == 0) ||
+      (gr[mouse_index][0] == 0 && gr[mouse_index][1] == 0 && gr[mouse_index][2] == 0) ||
+      (gr[mouse_index][1] == 0 && gr[mouse_index][2] == 0 && gr[mouse_index][3] == 0) ||
+      (gr[mouse_index][2] == 0 && gr[mouse_index][3] == 0 && gr[mouse_index][0] == 0)) {
+        int x = 15;
+        analyzedDeadEnd[mouse_index] = true;
+        //If the dead-end is also the location of the closest cheese, then
+        //check if other cheeses have been checked for dead ends.
+        if(mouse_index == min_cheese[0]) {
+          for(x = 0; x < cheeses; x++) {
+            int cheese_index = cheese_loc[x][0] + (cheese_loc[x][1] * size_X);
+            if(!analyzedDeadEnd[cheese_index]) {
+               break;
+            }
+          }
+        }
+        //If dead end is a cheese, and some other cheeses have not been analyzed for dead ends,
+        //or if just any other regular dead end, and the cat is close to the mouse, set util for
+        //dead-end to a really low number.
+        if(x != cheeses && min_cat[1] < 4) {
+            util -= 3000;
+        }
+    }
+
     //If the depth is closer to the root node, increase depth factor.
     double depth_factor = 1.5 * 1/(1 + depth);
     //If the util favours cats, then make depth factor negative.
@@ -346,18 +371,29 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     return util;
 }
 
-double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int objects, double distances[graph_size]) {
+void calculateMin(int mouse_loc[1][2], int object_loc[10][2], int objects, double distances[graph_size], double min[2], bool isCheeses) {
   /*
-   This function is a helper used to calculate the minimum of all distances to the objects passed.
+   This function is a helper used to calculate the minimum of all distances to the objects passed, along with
+   the position of the minimum.
   */
-    double min_dist = INFINITY;
     for(int x = 0; x < objects; x++) {
         int object_index = object_loc[x][0] + (object_loc[x][1] * size_X);
-        if(distances[object_index] < min_dist) {
-            min_dist = distances[object_index];
+        //If cheese is a dead end, then the next lowest distance cheese chosen
+        if(((isCheeses && !analyzedDeadEnd[object_index]) || !isCheeses) && distances[object_index] < min[1]) {
+            min[0] = object_index;
+            min[1] = distances[object_index];
         }
     }
-    return min_dist;
+    //If all cheeses, are dead ends, just pick the shortest distance between them
+    if(isCheeses && min[1] == INFINITY) {
+      for(int x = 0; x < objects; x++) {
+          int object_index = object_loc[x][0] + (object_loc[x][1] * size_X);
+          if(distances[object_index] < min[1]) {
+              min[0] = object_index;
+              min[1] = distances[object_index];
+          }
+      }
+    }
 }
 
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses) {
