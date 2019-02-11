@@ -40,6 +40,7 @@ double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int obje
 void enqueue(int cell);
 int dequeue();
 bool isQueueEmpty();
-void BFS(double gr[graph_size][4], int source_index, double arrayToAssign[graph_size]);
+void emptyQueue();
+void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double arrayToAssign[graph_size]);
 
 #endif
