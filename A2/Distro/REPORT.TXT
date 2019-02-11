@@ -48,9 +48,17 @@ but explain carefully when needed.
      search depth (number of turns) on the chances of the mouse
      winning the game.
 
+     A: Higher search depth means the mouse will be able to yield an even
+     better result for its next move since more squares are evaluated; this, in
+     turn will increase the chances of the mouse winning.
+
 3 .- (2 marks) What situations will cause your mouse to lose?
      can these be fixed either with the utility function, or
      by changing the search depth? if so, how?
+
+     A: The mouse loses when multiple cats of high smartness "corner it", or when
+     there are multiple cheeses at dead ends, again with the mouse being followed
+     by high smartness cats. INCOMPLETE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 4 .- (2 marks) Compare cats with smartness=.8 against cats with
      smartness=1 - which are harder for your mouse to beat?
@@ -69,14 +77,14 @@ Mark with an 'x' where appropriate. If something is only
 working partially, briefly describe what works, what
 doesn't work, or what problems exist.
 
-	Complete/Working	Partial		Not done
+	     Complete/Working	 Partial	Not done
 
-Utility
+Utility       [x]
  function
 
-MiniMax
+MiniMax       [x]
 
-Alpha/Beta
+Alpha/Beta    [x]
  pruning
 _____________________________________________________
 
