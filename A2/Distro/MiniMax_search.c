@@ -326,14 +326,14 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         }
     }
 
-    //If the mouse is at a "dead-end" i.e. square with three walls around it.
+    //If the mouse is at a "direct dead-end" i.e. square with three walls around it.
     if((gr[mouse_index][3] == 0 && gr[mouse_index][0] == 0 && gr[mouse_index][1] == 0) ||
       (gr[mouse_index][0] == 0 && gr[mouse_index][1] == 0 && gr[mouse_index][2] == 0) ||
       (gr[mouse_index][1] == 0 && gr[mouse_index][2] == 0 && gr[mouse_index][3] == 0) ||
       (gr[mouse_index][2] == 0 && gr[mouse_index][3] == 0 && gr[mouse_index][0] == 0)) {
         int x = 15;
         analyzedDeadEnd[mouse_index] = true;
-        //If the dead-end is also the location of the closest cheese, then
+        //If the direct dead-end is also the location of the closest cheese, then
         //check if other cheeses have been checked for dead ends.
         if(mouse_index == min_cheese[0]) {
           for(x = 0; x < cheeses; x++) {
@@ -343,9 +343,9 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
             }
           }
         }
-        //If dead end is a cheese, and some other cheeses have not been analyzed for dead ends,
-        //or if just any other regular dead end, and the cat is close to the mouse, set util for
-        //dead-end to a really low number.
+        //If direct dead end is a cheese, and some other cheeses have not been analyzed for direct dead ends,
+        //or if just any other direct dead end, and the cat is close to the mouse, set util for
+        //direct dead-end to a really low number.
         if(x != cheeses && min_cat[1] < 4) {
             util -= 3000;
         }
@@ -362,7 +362,6 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     if(util == 0) {
         util = -1;
     }
-    //printf("Util: %f\n", util);
     return util;
 }
 
