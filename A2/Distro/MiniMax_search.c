@@ -203,16 +203,11 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                     }
                 }
                 minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
-                //printf("Minimax: %f\n", minmax_cost[curr_loc[0][0]][curr_loc[0][1]]);
             }
         }
         if(depth == 0) {
             path[0][0] = best_loc[0];
             path[0][1] = best_loc[1];
-            /*printf("Max: %f\n", maxEval);
-            printf("Best X: %d\n", best_loc[0]);
-            printf("Best Y: %d\n", best_loc[1]);
-            printf("Depth: %d\n", depth);*/
         }
         return maxEval;
     } else {
