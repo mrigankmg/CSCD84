@@ -204,6 +204,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                     }
                 }
                 minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
+                //printf("Minimax: %f\n", minmax_cost[curr_loc[0][0]][curr_loc[0][1]]);
             }
         }
         if(depth == 0) {
@@ -276,8 +277,12 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     	These arguments are as described in A1. Do have a look at your solution!
     */
 
-    double mouse_to_cells_dist[graph_size];
-    BFS (gr, mouse_loc[0][0] + (mouse_loc[0][1] * size_X), cat_loc, cats, cheese_loc, cheeses, mouse_to_cells_dist);
+    double mouse_to_cells_dist[graph_size] = { INFINITY };
+    for(int x = 0; x < graph_size; x++) {
+        mouse_to_cells_dist[x] = INFINITY;
+    }
+    int mouse_index = mouse_loc[0][0] + (mouse_loc[0][1] * size_X);
+    BFS (gr, mouse_index, cat_loc, cats, cheese_loc, cheeses, mouse_to_cells_dist);
     double util = 0;
 
     double min_cheese_dist = calculateMinDistance(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist);
@@ -289,11 +294,12 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         //cat eats mouse then drastically decrease util.
         if(min_cheese_dist == 0) {
             util = 1000;
-        } else {
+        }
+        if(min_cat_dist == 0) {
             util = -1200;
         }
     } else {
-        util = (1/min_cheese_dist)*25 - min_cat_dist*0.2;
+        util = (1/min_cheese_dist)*25 - min_cat_dist*0.03;
         double min_cat_cheese_diff_dist = min_cat_dist - min_cheese_dist;
         //If cat is farther from mouse than cheese, then add to the utility
         //depending on how far the cat is from the mouse.
@@ -323,8 +329,8 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
             util += 8;
         }
     }
-    printf("Cheese Dist: %f\n", min_cheese_dist);
-    printf("Cat Dist: %f\n", min_cat_dist);
+    //printf("Cheese Dist: %f\n", min_cheese_dist);
+    //printf("Cat Dist: %f\n", min_cat_dist);
     //If the depth is closer to the root node, increase depth factor.
     double depth_factor = 1.5 * 1/(1 + depth);
     //If the util favours cats, then make depth factor negative.
@@ -336,11 +342,14 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     if(util == 0) {
         util = -1;
     }
-    //printf("%f\n", util);
+    //printf("Util: %f\n", util);
     return util;
 }
 
 double calculateMinDistance(int mouse_loc[1][2], int object_loc[10][2], int objects, double distances[graph_size]) {
+  /*
+   This function is a helper used to calculate the minimum of all distances to the objects passed.
+  */
     double min_dist = INFINITY;
     for(int x = 0; x < objects; x++) {
         int object_index = object_loc[x][0] + (object_loc[x][1] * size_X);
@@ -403,9 +412,6 @@ void emptyQueue() {
 }
 
 void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double arrayToAssign[graph_size]) {
-    for(int x = 0; x < graph_size; x++) {
-        arrayToAssign[x] = INFINITY;
-    }
     arrayToAssign[source_index] = 0;
     enqueue(source_index);
     while (!isQueueEmpty()) {
@@ -422,27 +428,27 @@ void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cat
         bool allFound = true;
         //check if distance found to all cats
         for(int x = 0; x < cats; x++) {
-          int cat_index = cat_loc[x][0] + (cat_loc[x][1] * size_X);
-          if(arrayToAssign[cat_index] == INFINITY) {
-            allFound = false;
-            break;
-          }
+            int cat_index = cat_loc[x][0] + (cat_loc[x][1] * size_X);
+            if(arrayToAssign[cat_index] == INFINITY) {
+                allFound = false;
+                break;
+            }
         }
         if(allFound) {
-          //check if distance found to all cheeses
-          for(int x = 0; x < cheeses; x++) {
-            int cheese_index = cheese_loc[x][0] + (cheese_loc[x][1] * size_X);
-            if(arrayToAssign[cheese_index] == INFINITY) {
-              allFound = false;
-              break;
+            //check if distance found to all cheeses
+            for(int x = 0; x < cheeses; x++) {
+                int cheese_index = cheese_loc[x][0] + (cheese_loc[x][1] * size_X);
+                if(arrayToAssign[cheese_index] == INFINITY) {
+                    allFound = false;
+                    break;
+                }
             }
-          }
-          //If all cats, and cheeses distances found then no need to BFS anymore.
-          //Empty the queue and exit loop.
-          if(allFound) {
-            emptyQueue();
-            break;
-          }
+            //If all cats, and cheeses distances found then no need to BFS anymore.
+            //Empty the queue and exit loop.
+            if(allFound) {
+                emptyQueue();
+                break;
+            }
         }
     }
 }
