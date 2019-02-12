@@ -334,7 +334,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         //If direct dead end is a cheese, and some other cheeses have not been analyzed for direct dead ends,
         //or if just any other direct dead end, and the cat is close to the mouse, set util for
         //direct dead-end to a really low number.
-        if(x != cheeses && min_cat[1] < 5) {
+        if(x != cheeses && min_cat[1] < 4) {
             util -= 3000;
         }
     }
@@ -363,7 +363,7 @@ void calculateMin(int mouse_loc[1][2], int object_loc[10][2], int objects, doubl
         //If looking for cheese and cheese is a dead end, then the next lowest distance cheese chosen,
         //unless the closest cat is at least 5 squares away. If not looking for cheese distance then
         //continue.
-        if((!isCheeses || !analyzedDeadEnd[object_index] || catDist >= 5) && distances[object_index] < min[1]) {
+        if((!isCheeses || !analyzedDeadEnd[object_index] || catDist >= 4) && distances[object_index] < min[1]) {
             min[0] = object_index;
             min[1] = distances[object_index];
         }
