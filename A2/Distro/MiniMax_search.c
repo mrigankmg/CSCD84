@@ -279,9 +279,9 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
     calculateMin(mouse_loc, cheese_loc, cheeses, mouse_to_cells_dist, min_cheese, min_cat[1], true);
 
     if(min_cheese[1] == 0 || min_cat[1] == 0) {
-        //If mouse eats cheese, and cat can't potentially land on cheese, then
-        //drastically increase util, or if cat eats mouse then drastically decrease util.
-        if(min_cheese[1] == 0 && min_cat[1] >=2) {
+        //If mouse eats cheese, and cat can't potentially land on cheese as well, or if last cheese
+        //then drastically increase util, or if cat eats mouse then drastically decrease util.
+        if(min_cheese[1] == 0 && (min_cat[1] >=2 || cheeses == 1)) {
             util = 1000;
         }
         if(min_cat[1] == 0) {
