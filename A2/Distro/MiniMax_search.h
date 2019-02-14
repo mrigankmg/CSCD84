@@ -39,8 +39,6 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
 void calculateMin(int mouse_loc[1][2], int object_loc[10][2], int objects, double distances[graph_size], double min[2], double catDist, bool isCheeses);
 void enqueue(int cell);
 int dequeue();
-bool isQueueEmpty();
-void emptyQueue();
-void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double arrayToAssign[graph_size]);
+void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double distances[graph_size]);
 
 #endif

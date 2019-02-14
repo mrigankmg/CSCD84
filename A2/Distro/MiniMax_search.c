@@ -403,13 +403,6 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
 
 }
 
-bool isQueueEmpty() {
-    if(queue_size == 0) {
-        front = 0;
-    }
-    return queue_size == 0;
-}
-
 void enqueue(int cell) {
     queue[queue_size + front] = cell;
     queue_size++;
@@ -418,56 +411,52 @@ void enqueue(int cell) {
 int dequeue() {
     int cell = queue[front];
     front++;
-    if(front == graph_size) {
-        front = 0;
-    }
     queue_size--;
     return cell;
 }
 
-void emptyQueue() {
-    while(!isQueueEmpty()) {
-        dequeue();
-    }
+bool allDistancesFound(int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double distances[graph_size]) {
+  bool allFound = true;
+  //check if distance found to all cats
+  for(int x = 0; x < cats; x++) {
+      int cat_index = cat_loc[x][0] + (cat_loc[x][1] * size_X);
+      if(distances[cat_index] == INFINITY) {
+          allFound = false;
+          break;
+      }
+  }
+  if(allFound) {
+      //check if distance found to all cheeses
+      for(int x = 0; x < cheeses; x++) {
+          int cheese_index = cheese_loc[x][0] + (cheese_loc[x][1] * size_X);
+          if(distances[cheese_index] == INFINITY) {
+              allFound = false;
+              break;
+          }
+      }
+      //If all cats, and cheeses distances found then no need to BFS anymore.
+      //Empty the queue and exit loop.
+      if(allFound) {
+          //"empty" the queue
+          queue_size = 0;
+          front = 0;
+      }
+  }
+  return allFound;
 }
 
-void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double arrayToAssign[graph_size]) {
-    arrayToAssign[source_index] = 0;
+void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double distances[graph_size]) {
+    distances[source_index] = 0;
     enqueue(source_index);
-    while (!isQueueEmpty()) {
+    while (!allDistancesFound(cat_loc, cats, cheese_loc, cheeses, distances)) {
         int curr = dequeue();
         int curr_x = curr % size_X;
         int curr_y = curr / size_Y;
         for(int x = 0; x < 4; x++) {
             int child = curr_x - ((x - 2) % 2) + ((curr_y + ((x - 1) % 2)) * size_X);
-            if(gr[curr][x] == 1 && arrayToAssign[child] == INFINITY) {
-                arrayToAssign[child] = arrayToAssign[curr] + 1;
+            if(gr[curr][x] == 1 && distances[child] == INFINITY) {
+                distances[child] = distances[curr] + 1;
                 enqueue(child);
-            }
-        }
-        bool allFound = true;
-        //check if distance found to all cats
-        for(int x = 0; x < cats; x++) {
-            int cat_index = cat_loc[x][0] + (cat_loc[x][1] * size_X);
-            if(arrayToAssign[cat_index] == INFINITY) {
-                allFound = false;
-                break;
-            }
-        }
-        if(allFound) {
-            //check if distance found to all cheeses
-            for(int x = 0; x < cheeses; x++) {
-                int cheese_index = cheese_loc[x][0] + (cheese_loc[x][1] * size_X);
-                if(arrayToAssign[cheese_index] == INFINITY) {
-                    allFound = false;
-                    break;
-                }
-            }
-            //If all cats, and cheeses distances found then no need to BFS anymore.
-            //Empty the queue and exit loop.
-            if(allFound) {
-                emptyQueue();
-                break;
             }
         }
     }
