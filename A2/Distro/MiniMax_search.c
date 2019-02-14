@@ -288,23 +288,25 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
             util = -1200;
         }
     } else {
+        //The farther the cheese, the less is added to util, and the closer the mouse,
+        //the more is subtracted from the util.
         util = (1/min_cheese[1])*25 - min_cat[1]*0.03;
-        double min_cat_cheese_diff_dist = min_cat[1] - min_cheese[1];
+        double min_cat_cheese_diff_dist = min_cheese[1] - min_cat[1];
         //If cat is farther from mouse than cheese, then add to the utility
         //depending on how far the cat is from the mouse. If cat is closer to mouse
         //than cheese, then subtract from the utility depending on how close the cat
         //is to the mouse.
-        if (min_cat_cheese_diff_dist >= 8) {
+        if (min_cat_cheese_diff_dist <= -8) {
             util += 9;
-        } else if (min_cat_cheese_diff_dist >= 4) {
+        } else if (min_cat_cheese_diff_dist <= -4) {
             util += 4;
-        } else if (min_cat_cheese_diff_dist >= 0) {
+        } else if (min_cat_cheese_diff_dist <= 0) {
             util += 1;
-        } else if (min_cat_cheese_diff_dist <= -11) {
+        } else if (min_cat_cheese_diff_dist >= 11) {
             util -= 12;
-        } else if (min_cat_cheese_diff_dist <= -6) {
+        } else if (min_cat_cheese_diff_dist >= 6) {
             util -= 6;
-        } else if (min_cat_cheese_diff_dist <= -2) {
+        } else if (min_cat_cheese_diff_dist >= 2) {
             util -= 2;
         }
         //If mouse is within 5 steps of getting closest cheese, then add more to
