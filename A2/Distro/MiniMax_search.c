@@ -159,13 +159,14 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
     *
     ********************************************************************************************************/
 
+    //If maximum depth has been reached, or if the node is a terminal node, calculate and return a utility value.
     if(depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses) == 1) {
         return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
     }
     if(agentId == 0) {
         int best_loc[2];
         double maxEval = -INFINITY;
-        //Reset all minimax_cost values to 0, and alpha and beta values.
+        //Check all possible moves the mouse can make, since it's the mouse's move to make.
         for (int x = 0; x < 4; x++) {
             if(gr[mouse_loc[0][0] + ((mouse_loc[0][1]) * size_X)][x] == 1) {
                 int curr_loc[1][2];
@@ -178,11 +179,13 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                 }
                 //pass in new depth, new agentId, and new mouse_loc
                 double eval = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, curr_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+                //If eval is higher than the preiviously evaluated maxEval, then replace the value of maxEval with eval.
                 if(eval > maxEval) {
                     maxEval = eval;
                     best_loc[0] = curr_loc[0][0];
                     best_loc[1] = curr_loc[0][1];
                 }
+                //If alpha beta pruning is on then prune.
                 if(mode == 1) {
                     if(alpha < eval) {
                         alpha = eval;
@@ -194,6 +197,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                 minmax_cost[curr_loc[0][0]][curr_loc[0][1]] = eval;
             }
         }
+        //Once all paths and moves have been analyzed, set the new best position for the mouse.
         if(depth == 0) {
             path[0][0] = best_loc[0];
             path[0][1] = best_loc[1];
@@ -202,6 +206,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
     } else {
         int curr_cat = agentId - 1;
         double minEval = INFINITY;
+        //Check all possible moves the current cat can make, since it's the current cat's move to make.
         for (int x = 0; x < 4; x++) {
             if(gr[cat_loc[curr_cat][0] + ((cat_loc[curr_cat][1]) * size_X)][x] == 1) {
                 int curr_loc[cats][2];
@@ -214,6 +219,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                 } else {
                     curr_loc[curr_cat][0] -= (x - 2);
                 }
+                //If all cats have made moves, then reset agentId to mouse's move.
                 if(agentId == cats) {
                     agentId = -1;
                 }
@@ -222,6 +228,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
                 if(eval < minEval) {
                     minEval = eval;
                 }
+                //If alpha beta pruning is on then prune.
                 if(mode == 1) {
                     if(beta > eval) {
                         beta = eval;
@@ -309,10 +316,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         } else if (min_cat_cheese_diff_dist >= 2) {
             util -= 2;
         }
-        //If mouse is within 5 steps of getting closest cheese, then add more to
+        //If mouse is within 3 steps of getting closest cheese, then add more to
         //the utility.
-        if (min_cheese[1] <= 5) {
-            util += 8;
+        if (min_cheese[1] <= 3) {
+            util += 10;
         }
     }
 
@@ -348,10 +355,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
         depth_factor *= -1;
     }
     util += depth_factor;
-    //If util is somehow tied, then slightly favor the cats.
-    if(util == 0) {
-        util = -1;
-    }
+
     return util;
 }
 
@@ -406,11 +410,13 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
 }
 
 void enqueue(int cell) {
+    //Add cell to the queue.
     queue[queue_size + front] = cell;
     queue_size++;
 }
 
 int dequeue() {
+    //Remove first value from queue.
     int cell = queue[front];
     front++;
     queue_size--;
@@ -448,6 +454,7 @@ bool allDistancesFound(int cat_loc[10][2], int cats, int cheese_loc[10][2], int 
 }
 
 void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, double distances[graph_size]) {
+    /* This function is used to calculate the BFS distance from the mouse to all cats, and cheeses.*/
     distances[source_index] = 0;
     enqueue(source_index);
     while (!allDistancesFound(cat_loc, cats, cheese_loc, cheeses, distances)) {
@@ -455,6 +462,7 @@ void BFS(double gr[graph_size][4], int source_index, int cat_loc[10][2], int cat
         int curr_x = curr % size_X;
         int curr_y = curr / size_Y;
         for(int x = 0; x < 4; x++) {
+            //child is the index of the current child
             int child = curr_x - ((x - 2) % 2) + ((curr_y + ((x - 1) % 2)) * size_X);
             if(gr[curr][x] == 1 && distances[child] == INFINITY) {
                 distances[child] = distances[curr] + 1;

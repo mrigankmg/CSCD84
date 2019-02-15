@@ -44,6 +44,40 @@ but explain carefully when needed.
      a single, meaningful value. Convince us that your utility
      makes sense!
 
+     A: The value of my utility is influenced by 4 main factors:
+     i) BFS distance to closest cheese
+     ii) BFS distance to closest cat
+     iii) Depth factor i.e. how high up the tree the node is.
+     iv) Direct dead-ends i.e. squares with three walls around it.
+
+     Firstly, I find the BFS distance to the closest mouse, and closest cheese.
+     If the mouse ends up ladning onto a cheese, then as long as a cat won't land on
+     the same cheese at the same time, then the utility is drastically increased in favour
+     of the mouse. If the mouse ends up landing on a cat, the utility is drastically decreased.
+
+     If it's none of the cases mentioned above, I calculate a base utility to which a value is added
+     based on based on how close the closest cheese is, and a value is subtracted based on how far
+     the closest cat is. The closer the cat the higher value is subtracted, and the farther the cheese,
+     the lower value is added. Additionally, the difference between the distance to the closest cheese,
+     and the distance to the closest cat is calculated as well (closest cheese distance - closest cat distance).
+     This is to refine the base utility calculated. If the closest cat is closer to the mouse than the
+     closest cheese, a certain value is subtracted from the base utility depending on how much the difference
+     favors the cat. However, if the closest cheese is closer to the mouse than the closest cat, a certain value
+     is added from the base utility depending on how much the difference favors the cheese.
+
+     Next, we check for squares that are direct dead ends i.e. squares with three walls around them. Any
+     such square is given a drasticlally low utility value if the cat is close enough. Now we have to consider
+     the case where a cheese is within one of these dead ends or if multiple cheeses are. In these cases, the utility
+     is drastically reduced if the cheese is at a dircet dead end, and the closest cat is too close, thus causing the
+     mouse to avoid that given cheese/cheeses so it doesn't get caught by the cat. This will cause all direct dead end
+     cheeses to be left at the end. Now if the mouse is lucky and there's only one left, it will go for that cheese and
+     win the game. However, if the mouse is unlucky, it will go for a dead end cheese with the closest distance, and it will
+     lose since the cats are too close.
+
+     Finally, based on how far up the tree the leaf node is, it's given a priority by adding a higher value to the utility.
+     This basically helps the mouse pick a slightly better square if multiple paths return the same utility value to the root
+     before this calculation.
+
 2 .- (2 marks) Ignoring computation time, what is the effect of
      search depth (number of turns) on the chances of the mouse
      winning the game.
@@ -58,18 +92,43 @@ but explain carefully when needed.
 
      A: The mouse loses when multiple cats of high smartness "corner it", or when
      there are multiple cheeses at dead ends, again with the mouse being followed
-     by high smartness cats. INCOMPLETE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     by high smartness cats. With the highest smartness cats, I highly doubt that
+     winning dead end cheeses is possible unless we always manage to maintain a certain
+     distance from all cats. The mouse also loses if the cheese is on a dead end path
+     but not directly at a dead end if the cats are close enough. This can be avoided
+     by calculating if a square is within a dead end path by trying to detect cycles in the graphs,
+     and their sizes. If there's a cycle in the graph the squares in the cycle are not part of a dead
+     end, so these squares could be given a higher utility value based on the size of the cycle.
+     Squares that are not part of a cycle in the graph can be given a lower utility.
 
 4 .- (2 marks) Compare cats with smartness=.8 against cats with
      smartness=1 - which are harder for your mouse to beat?
      why do you think that is?
 
+     A: It's harder for my mouse to beat the 0.8 smartness cats because of the factor
+     of randomness. The cat's could potentially make a move that could completely
+     throw off the mouse, and this could lead to the mouse getting cornered, and eventually
+     losing.
+
 5 .- (2 marks) Can the mouse be made unbeatable by having an
      optimal utility function?
+
+     A: No, I believe there will always be cases where the mouse fails,
+     because at the end of the day, the utility depends on weights. We can
+     enchance the utility but we will get to a point eventually where we
+     will need to choose which cases are worth winning, and which ones should
+     be lost.
 
 6 .- (2 bonus marks) Could a human playing the game in place
       of the mouse do better than your code? (yes, no, and
       a reasonable explanation of why)
+
+      A: A human playing the game in place of the mouse could definitely
+      do better than my code because the humans would be constantly adapting
+      the moves they play solely based on the positions of the cats and the cheeses.
+      In other words, humans would have an "adaptive utility" advantage over my code.
+      They also wouldn't necessarily try to go for the cheese that's closest to the them,
+      but rather pick one that's super safe.
 
 _____________________________________________________
 
