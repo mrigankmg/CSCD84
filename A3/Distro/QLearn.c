@@ -35,38 +35,36 @@ int queue[max_graph_size];
 int front = 0;
 int queue_size = 0;
 
-void QLearn_update(int s, int a, double r, int s_new, double *QTable)
-{
- /*
-   This function implementes the Q-Learning update as stated in Lecture. It
-   receives as input a <s,a,r,s'> tuple, and updates the Q-table accordingly.
+void QLearn_update(int s, int a, double r, int s_new, double * QTable) {
+  /*
+    This function implementes the Q-Learning update as stated in Lecture. It
+    receives as input a <s,a,r,s'> tuple, and updates the Q-table accordingly.
 
-   Your work here is to calculate the required update for the Q-table entry
-   for state s, and apply it to the Q-table
+    Your work here is to calculate the required update for the Q-table entry
+    for state s, and apply it to the Q-table
 
-   The update involves two constants, alpha and lambda, which are defined in QLearn.h - you should not
-   have to change their values. Use them as they are.
+    The update involves two constants, alpha and lambda, which are defined in QLearn.h - you should not
+    have to change their values. Use them as they are.
 
-   Details on how states are used for indexing into the QTable are shown
-   below, in the comments for QLearn_action. Be sure to read those as well!
- */
+    Details on how states are used for indexing into the QTable are shown
+    below, in the comments for QLearn_action. Be sure to read those as well!
+  */
 
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-	 double max_next = -INFINITY;
-	 for(int x = 0; x < 4; x++) {
-		 double curr = *(QTable+(4*s_new)+x);
-		 if(curr > max_next) {
-			 max_next = curr;
-		 }
-	 }
-	 double curr_val = *(QTable+(4*s)+a);
-	 *(QTable+(4*s)+a) = curr_val + alpha * (r + lambda*max_next - curr_val);
+  double max_next = -INFINITY;
+  for (int x = 0; x < 4; x++) {
+    double curr = * (QTable + (4 * s_new) + x);
+    if (curr > max_next) {
+      max_next = curr;
+    }
+  }
+  double curr_val = * (QTable + (4 * s) + a);
+  *(QTable + (4 * s) + a) = curr_val + alpha * (r + lambda * max_next - curr_val);
 }
 
-int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, double *QTable, int size_X, int graph_size)
-{
+int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, double * QTable, int size_X, int graph_size) {
   /*
      This function decides the action the mouse will take. It receives as inputs
      - The graph - so you can check for walls! The mouse must never move through walls
@@ -141,12 +139,11 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
    * TO DO: Complete this function
    ***********************************************************************************************/
 
-  return(0);		// <--- of course, you will change this!
+  return (0); // <--- of course, you will change this!
 
 }
 
-double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
-{
+double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
   /*
     This function computes and returns a reward for the state represented by the input mouse, cat, and
     cheese position.
@@ -161,73 +158,72 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     This function should return a maximim/minimum reward when the mouse eats/gets eaten respectively.
    */
 
-   /***********************************************************************************************
+  /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-	double distances_from_mouse[32][32];
-	for(int x = 0; x < size_X; x++) {
-		for(int y = 0; y < size_X; y++) {
-			distances_from_mouse[x][y] = INFINITY;
-		}
-	}
-	distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
-	int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
-	BFS (gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
-	double reward = 0;
-	double cat_dist = distances_from_mouse[cats[0][0]][cats[0][1]];
-	double cheese_dist = distances_from_mouse[cheeses[0][0]][cheeses[0][1]];
+  double distances_from_mouse[32][32];
+  for (int x = 0; x < size_X; x++) {
+    for (int y = 0; y < size_X; y++) {
+      distances_from_mouse[x][y] = INFINITY;
+    }
+  }
+  distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
+  int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+  BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
+  double reward = 0;
+  double cat_dist = distances_from_mouse[cats[0][0]][cats[0][1]];
+  double cheese_dist = distances_from_mouse[cheeses[0][0]][cheeses[0][1]];
 
-	//If mouse gets eaten by cat, give a negative reward. However, if it survives
-	//and if mouse eats cheese, then give a positive reward.
-	if(cat_dist == 0) {
-		reward -= 50;
-	} else if (cheese_dist == 0){
-		reward += 50;
-	} else {
-		//The farther the cheese, the less is added to reward, and the closer the cat,
-		//the more is subtracted from the reward.
-		reward = (1/cheese_dist)*25 - cat_dist*0.03;
-		double cat_cheese_dist_diff = cheese_dist - cat_dist;
-		//If cat is farther from mouse than cheese, then add to the reward
-		//depending on how far the cat is from the mouse. If cat is closer to mouse
-		//than cheese, then subtract from the reward depending on how close the cat
-		//is to the mouse.
-		if (cat_cheese_dist_diff <= -8) {
-				reward += 9;
-		} else if (cat_cheese_dist_diff <= -4) {
-				reward += 4;
-		} else if (cat_cheese_dist_diff <= 0) {
-				reward += 1;
-		} else if (cat_cheese_dist_diff >= 11) {
-				reward -= 12;
-		} else if (cat_cheese_dist_diff >= 6) {
-				reward -= 6;
-		} else if (cat_cheese_dist_diff >= 2) {
-				reward -= 2;
-		}
-		//If mouse is within 3 steps of getting closest cheese, then add more to
-		//the reward.
-		if (cheese_dist <= 2) {
-				reward += 10;
-		}
-		int wall_counter = 0;
-		//Count number of walls around mouse.
-		for(int x = 0; x < 4; x++) {
-			if (gr[mouse_index][x] == 0) {
-				wall_counter ++;
-			}
-		}
-		//If mouse is at a square with 3 walls around it and no cheese on the square
-		//then reduce the reward some more.
-		if(wall_counter == 3) {
-			reward -= 50;
-		}
-	}
+  //If mouse gets eaten by cat, give a negative reward. However, if it survives
+  //and if mouse eats cheese, then give a positive reward.
+  if (cat_dist == 0) {
+    reward -= 50;
+  } else if (cheese_dist == 0) {
+    reward += 50;
+  } else {
+    //The farther the cheese, the less is added to reward, and the closer the cat,
+    //the more is subtracted from the reward.
+    reward = (1 / cheese_dist) * 25 - cat_dist * 0.03;
+    double cat_cheese_dist_diff = cheese_dist - cat_dist;
+    //If cat is farther from mouse than cheese, then add to the reward
+    //depending on how far the cat is from the mouse. If cat is closer to mouse
+    //than cheese, then subtract from the reward depending on how close the cat
+    //is to the mouse.
+    if (cat_cheese_dist_diff <= -8) {
+      reward += 9;
+    } else if (cat_cheese_dist_diff <= -4) {
+      reward += 4;
+    } else if (cat_cheese_dist_diff <= 0) {
+      reward += 1;
+    } else if (cat_cheese_dist_diff >= 11) {
+      reward -= 12;
+    } else if (cat_cheese_dist_diff >= 6) {
+      reward -= 6;
+    } else if (cat_cheese_dist_diff >= 2) {
+      reward -= 2;
+    }
+    //If mouse is within 3 steps of getting closest cheese, then add more to
+    //the reward.
+    if (cheese_dist <= 2) {
+      reward += 10;
+    }
+    int wall_counter = 0;
+    //Count number of walls around mouse.
+    for (int x = 0; x < 4; x++) {
+      if (gr[mouse_index][x] == 0) {
+        wall_counter++;
+      }
+    }
+    //If mouse is at a square with 3 walls around it and no cheese on the square
+    //then reduce the reward some more.
+    if (wall_counter == 3) {
+      reward -= 50;
+    }
+  }
   return reward;
 }
 
-void feat_QLearn_update(double gr[max_graph_size][4],double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
-{
+void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
   /*
     This function performs the Q-learning adjustment to all the weights associated with your
     features. Unlike standard Q-learning, you don't receive a <s,a,r,s'> tuple, instead,
@@ -238,14 +234,13 @@ void feat_QLearn_update(double gr[max_graph_size][4],double weights[25], double 
     Your code must then evaluate the update and apply it to the weights in the weight array.
    */
 
-   /***********************************************************************************************
+  /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
 
 }
 
-int feat_QLearn_action(double gr[max_graph_size][4],double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, int size_X, int graph_size)
-{
+int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], double pct, int size_X, int graph_size) {
   /*
     Similar to its counterpart for standard Q-learning, this function returns the index of the next
     action to be taken by the mouse.
@@ -264,12 +259,11 @@ int feat_QLearn_action(double gr[max_graph_size][4],double weights[25], int mous
    * TO DO: Complete this function
    ***********************************************************************************************/
 
-  return(0);		// <--- replace this while you're at it!
+  return (0); // <--- replace this while you're at it!
 
 }
 
-void evaluateFeatures(double gr[max_graph_size][4],double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
-{
+void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
   /*
    This function evaluates all the features you defined for the game configuration given by the input
    mouse, cats, and cheese positions. You are free to define up to 25 features. This function will
@@ -285,42 +279,40 @@ void evaluateFeatures(double gr[max_graph_size][4],double features[25], int mous
    will have a value of -1 - check this when evaluating your features!
   */
 
-   /***********************************************************************************************
+  /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
 
 }
 
-double Qsa(double weights[25], double features[25])
-{
+double Qsa(double weights[25], double features[25]) {
   /*
     Compute and return the Qsa value given the input features and current weights
    */
 
   /***********************************************************************************************
-  * TO DO: Complete this function
-  ***********************************************************************************************/
-
-  return(0);		// <--- stub! compute and return the Qsa value
-}
-
-void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size, double *maxU, int *maxA)
-{
- /*
-   Given the state represented by the input positions for mouse, cats, and cheese, this function evaluates
-   the Q-value at all possible neighbour states and returns the max. The maximum value is returned in maxU
-   and the index of the action corresponding to this value is returned in maxA.
-
-   You should make sure the function does not evaluate moves that would make the mouse walk through a
-   wall.
-  */
-
-   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
 
-  *maxU=0;	// <--- stubs! your code will compute actual values for these two variables!
-  *maxA=0;
+  return (0); // <--- stub! compute and return the Qsa value
+}
+
+void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size, double * maxU, int * maxA) {
+  /*
+    Given the state represented by the input positions for mouse, cats, and cheese, this function evaluates
+    the Q-value at all possible neighbour states and returns the max. The maximum value is returned in maxU
+    and the index of the action corresponding to this value is returned in maxA.
+
+    You should make sure the function does not evaluate moves that would make the mouse walk through a
+    wall.
+   */
+
+  /***********************************************************************************************
+   * TO DO: Complete this function
+   ***********************************************************************************************/
+
+  * maxU = 0; // <--- stubs! your code will compute actual values for these two variables!
+  * maxA = 0;
   return;
 
 }
@@ -330,55 +322,55 @@ void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2],
  *                 ---->  THIS BOX <-----
  * *************************************************************************************************/
 
- bool allDistancesFound(int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32]) {
-   //check if distance found to all cats
-   for(int x = 0; x < cats; x++) {
-       if(distances[cat_loc[x][0]][cat_loc[x][1]] == INFINITY) {
-           return false;
-       }
-   }
-   //check if distance found to all cheeses
-   for(int x = 0; x < cheeses; x++) {
-      if(distances[cheese_loc[x][0]][cheese_loc[x][1]] == INFINITY) {
-          return false;
+bool allDistancesFound(int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32]) {
+  //check if distance found to all cats
+  for (int x = 0; x < cats; x++) {
+    if (distances[cat_loc[x][0]][cat_loc[x][1]] == INFINITY) {
+      return false;
+    }
+  }
+  //check if distance found to all cheeses
+  for (int x = 0; x < cheeses; x++) {
+    if (distances[cheese_loc[x][0]][cheese_loc[x][1]] == INFINITY) {
+      return false;
+    }
+  }
+  //"empty" the queue
+  queue_size = 0;
+  front = 0;
+  return true;
+}
+
+void enqueue(int cell) {
+  //Add cell to the queue.
+  queue[queue_size + front] = cell;
+  queue_size++;
+}
+
+int dequeue() {
+  //Remove first value from queue.
+  int cell = queue[front];
+  front++;
+  queue_size--;
+  return cell;
+}
+
+void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32], int size_X) {
+  /* This function is used to calculate the BFS distance from the mouse to all cats, and cheeses.*/
+  enqueue(source_index);
+  while (!allDistancesFound(cat_loc, cats, cheese_loc, cheeses, distances)) {
+    int curr = dequeue();
+    int curr_x = curr % size_X;
+    int curr_y = curr / size_X;
+    for (int x = 0; x < 4; x++) {
+      //child is the index of the current child
+      int child_x = curr_x - ((x - 2) % 2);
+      int child_y = curr_y + ((x - 1) % 2);
+      int child = child_x + (child_y * size_X);
+      if (gr[curr][x] == 1 && distances[child_x][child_y] == INFINITY) {
+        distances[child_x][child_y] = distances[curr_x][curr_y] + 1;
+        enqueue(child);
       }
-   }
-   //"empty" the queue
-   queue_size = 0;
-   front = 0;
-   return true;
- }
-
- void enqueue(int cell) {
-     //Add cell to the queue.
-     queue[queue_size + front] = cell;
-     queue_size++;
- }
-
- int dequeue() {
-     //Remove first value from queue.
-     int cell = queue[front];
-     front++;
-     queue_size--;
-     return cell;
- }
-
- void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32], int size_X) {
-     /* This function is used to calculate the BFS distance from the mouse to all cats, and cheeses.*/
-     enqueue(source_index);
-     while (!allDistancesFound(cat_loc, cats, cheese_loc, cheeses, distances)) {
-         int curr = dequeue();
-         int curr_x = curr % size_X;
-         int curr_y = curr / size_X;
-         for(int x = 0; x < 4; x++) {
-             //child is the index of the current child
-						 int child_x = curr_x - ((x - 2) % 2);
-						 int child_y = curr_y + ((x - 1) % 2);
-             int child = child_x + (child_y * size_X);
-             if(gr[curr][x] == 1 && distances[child_x][child_y] == INFINITY) {
-                 distances[child_x][child_y] = distances[curr_x][curr_y] + 1;
-                 enqueue(child);
-             }
-         }
-     }
- }
+    }
+  }
+}
