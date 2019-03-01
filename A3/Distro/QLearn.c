@@ -117,7 +117,7 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
        size_X = 8		<--- size of one side of the maze
        graph_size = 64		<--- Total number of nodes in the graph
 
-   Indexing within the Q-table works as follows:
+   Indexing within the Q-table
 
      say the mouse is at   i,j
          the cat is at     k,l
@@ -139,8 +139,52 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
    * TO DO: Complete this function
    ***********************************************************************************************/
 
-  return (0); // <--- of course, you will change this!
+  // maybe do the randomization better
+  int randChance = (int)100*pct;
+  int dieRoll = rand()%100+1;
+  // maybe do the randomization better
+  int move = 0;
+  int currentMouseIndex = mouse_pos[0][0] + mouse_pos[0][1]*size_X;
+  int state = (mouse_pos[0][0]+(mouse_pos[0][1]*size_X)) + ((cats[0][0]+(cats[0][1]*size_X))*graph_size) + ((cheeses[0][0]+(cheeses[0][1]*size_X))*graph_size*graph_size);
 
+  // if below exploit
+  if (randChance >= dieRoll){
+    double maxVal = -INFINITY;
+    int maxIndex;
+    for(int a = 0; a < 4; a++){
+      double currentVal = *(QTable+(4*state)+a);
+      if ((gr[currentMouseIndex][a])&&(maxVal < currentVal)){
+        maxVal = currentVal;
+        maxIndex = a;
+      }
+    }
+    move = maxIndex;
+  // o/w explore
+  } else {
+    int initMoves[4];
+    // should always be positive by assumption
+    int counter = 0;
+    for (int i = 0; i < 4; i++){
+      initMoves[i] = -1;
+    }
+    for (int i = 0; i < 4; i++){
+      if (gr[currentMouseIndex][i]){
+        initMoves[i] = i;
+        counter++;
+      }
+    }
+    int availableMoves[counter];
+    int nCounter = 0;
+    for (int j = 0; j < 4; j++){
+        if (initMoves[j] != -1){
+          availableMoves[nCounter] = initMoves[j];
+          nCounter++;
+        }
+    }
+    int randMove = rand()%counter;
+    move = availableMoves[randMove];
+  }
+  return move; // <--- of course, you will change this!
 }
 
 double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -181,8 +225,8 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   } else if (cheese_dist == 0) {
     reward += 50;
   } else {
-    //The farther the cheese, the less is added to reward, and the closer the cat, the more is
-    //subtracted from the reward.
+    //The farther the cheese, thefeature based learningo reward, and the closer the cat, the more is
+    //subtracted from the reward.feature based learning
     reward = (1 / cheese_dist) * 25 - cat_dist * 0.03;
     double cat_cheese_dist_diff = cheese_dist - cat_dist;
     //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
