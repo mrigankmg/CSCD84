@@ -189,20 +189,20 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     //depending on how far the cat is from the mouse. If cat is closer to mouse
     //than cheese, then subtract from the reward depending on how close the cat
     //is to the mouse.
-    if (cat_cheese_dist_diff <= -8) {
+    if (cat_cheese_dist_diff <= -4) {
       reward += 9;
-    } else if (cat_cheese_dist_diff <= -4) {
+    } else if (cat_cheese_dist_diff <= -2) {
       reward += 4;
     } else if (cat_cheese_dist_diff <= 0) {
       reward += 1;
-    } else if (cat_cheese_dist_diff >= 11) {
+    } else if (cat_cheese_dist_diff >= 5) {
       reward -= 12;
-    } else if (cat_cheese_dist_diff >= 6) {
+    } else if (cat_cheese_dist_diff >= 3) {
       reward -= 6;
-    } else if (cat_cheese_dist_diff >= 2) {
+    } else if (cat_cheese_dist_diff >= 1) {
       reward -= 2;
     }
-    //If mouse is within 3 steps of getting closest cheese, then add more to
+    //If mouse is within 2 steps of getting closest cheese, then add more to
     //the reward.
     if (cheese_dist <= 2) {
       reward += 10;
