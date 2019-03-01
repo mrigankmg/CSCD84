@@ -10,15 +10,15 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): Mrigank Mehta
 
 Student Name 2 (last, first):
 
-Student number 1:
+Student number 1: 1001309014
 
 Student number 2:
 
-UTORid 1:
+UTORid 1: mehtamri
 
 UTORid 2:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _(student 1 name here)__	_(student 2 name here)__
+	Signed: _Mrigank_Mehta_	_(student 2 name here)__
 
 
 (-5 marks for failing to provide the identifying
@@ -42,8 +42,8 @@ but explain carefully when needed.
       are used, and why you think this is a good reward function
       for this problem.
 
-2 .- These are multiple experiments (once you are sure your 
-     QLearning code is working!) 
+2 .- These are multiple experiments (once you are sure your
+     QLearning code is working!)
 
      * IMPORTANT! * For each training run, SAVE the Qtable
      you will re-use the Qtables later.
@@ -53,7 +53,7 @@ but explain carefully when needed.
 
      Initial mouse winning rate (first rate obtained when training starts):
 
-     Train your mouse, and once trained, run the evaluation and  
+     Train your mouse, and once trained, run the evaluation and
      record the mouse winning rate:
 
      (1 mark) # Experiment 2, 1000000 training trials, 50 rounds, random seed 1522,
@@ -61,22 +61,22 @@ but explain carefully when needed.
 
      Initial mouse winning rate (first rate obtained when training starts):
 
-     Train your mouse, and once trained, run the evaluation and  
+     Train your mouse, and once trained, run the evaluation and
      record the mouse winning rate:
 
      (1 mark) Would the mouse keep improving and become invincible if
-     you ran, say, 100,000,000 training rounds per batch?     
+     you ran, say, 100,000,000 training rounds per batch?
 
 4 .- Using the QTable saved from Experiment 2 (NO re-training!)
 
      (1 mark) # Experiment 3 - Run the evaluation on the 8x8 grid, cat-smartness=.9,
      # but using the random seed 4289 for the game.
-	
+
      Mouse Winning Rate:
 
      (2 mark) # Experiment 4 - Run the evaluation on the 8x8 grid, cat-smartness=.9,
      # but using the random seed 31415 for the game.
-	
+
      Mouse Winning Rate:
 
      Average rate for Experiement 3 and Experiment 4:
@@ -95,7 +95,7 @@ but explain carefully when needed.
      (1 mark) Compare the final winning rate with that from Experiment 2, what can
      you say about the difference in winning rates?
 
-6 .- (2 marks) Is standard Q-Learning a rasonable strategy for environments
+6 .- (2 marks) Is standard Q-Learning a reasonable strategy for environments
      that change constantly? discuss based on the above
 
 7 .- (3 marks) Explain your feature set for feature-based Q Learning, and
@@ -105,11 +105,11 @@ but explain carefully when needed.
 8 .- Carry out the following experiments:
 
      (1 mark) # Experiment 6: Train your mouse using feature-based Q-Learning, on
-     # the 16x16 grid, one cat, and one cheese, cat-smartness=.9,  
-     # random seed = 1522, and use 1000000 trials and 50 rounds. 
+     # the 16x16 grid, one cat, and one cheese, cat-smartness=.9,
+     # random seed = 1522, and use 1000000 trials and 50 rounds.
 
      Initial mouse winning rate (first rate obtained when training starts):
-     
+
      Mouse Winning Rate (from evaluation after training):
 
      Compare this rate against the rate obtained in Experiment #5, what
@@ -130,50 +130,50 @@ but explain carefully when needed.
 
      (1 mark) Comparing the winning rates from Experiments #7 and #8 against
      those from Experiment #6, what can you conclude about feature-
-     based Q-Learning in terms of its ability to deal with changes 
+     based Q-Learning in terms of its ability to deal with changes
      to the environment?
-     
+
 9 .- Carry out the following experiments:
 
      (1 mark) # Experiment 9: Train your mouse using feature-based Q-Learning, on
-     # the 16x16 grid, 2 cats, and 3 cheeses, cat-smartness=.9,  
-     # random seed = 1522, and use 1000000 trials and 50 rounds. 
+     # the 16x16 grid, 2 cats, and 3 cheeses, cat-smartness=.9,
+     # random seed = 1522, and use 1000000 trials and 50 rounds.
 
      Initial mouse winning rate (first rate obtained when training starts):
-     
-     Mouse Winning Rate (from evaluation after training):
-  
-     (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
-     # re-training), run the evaluation on the 16x16 grid, 2 cats, 
-     # 3 cheeses, cat-smartness=.9, and random seed 4289
-     
+
      Mouse Winning Rate (from evaluation after training):
 
      (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
-     # re-training), run the evaluation on the 32x32 grid, 2 cats, 
+     # re-training), run the evaluation on the 16x16 grid, 2 cats,
      # 3 cheeses, cat-smartness=.9, and random seed 4289
-     
+
+     Mouse Winning Rate (from evaluation after training):
+
+     (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
+     # re-training), run the evaluation on the 32x32 grid, 2 cats,
+     # 3 cheeses, cat-smartness=.9, and random seed 4289
+
      Mouse Winning Rate (from evaluation after training):
 
      (2 marks) Based on the last 3 experiments, what can you conclude regarding
-     the usefulness and applicability of standard Q-Learning vs. 
+     the usefulness and applicability of standard Q-Learning vs.
      feature-based Q-learning?
 
 10 . - (2 marks) We obviously can not train an expensive robot by trial and error,
       How would you implement feature-based Q-learning for a mobile bot so you
       can take advantage of reinforcement learning but not spend millions on
       broken robots that keep falling down the stairs?
-      
-      
+
+
 _____________________________________________________
 
 Mark with an 'x' where appropriate. If something is only
 working partially, briefly describe what works, what
 doesn't work, or what problems exist.
-	
+
 			Complete/Working	Partial		Not done
 
-QLearn 
+QLearn
  update
 
 Reward
@@ -217,5 +217,3 @@ Marking:
 (- marks)  Penalty marks
 
 Total for A3:       / out of 100
-
-
