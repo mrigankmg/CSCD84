@@ -2,4 +2,6 @@ AI_search.o
 AI_search
 MiniMax_search.o
 MiniMax_search
+QLearn
+QLearn.o
 .DS_Store
