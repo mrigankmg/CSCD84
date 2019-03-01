@@ -220,7 +220,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
 		//If mouse is at a square with 3 walls around it and no cheese on the square
 		//then reduce the reward some more.
 		if(wall_counter == 3) {
-			reward -= 25;
+			reward -= 50;
 		}
 	}
   return reward;
