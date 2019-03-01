@@ -47,5 +47,8 @@ void expensiveFeature1(double gr[max_graph_size][4], int path[max_graph_size][2]
 int checkForGoal(int x, int y, int pos[5][2]);
 
 // If you need to add any function prototypes yourself, you can do so *below* this line.
+void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32], int size_X);
+bool allDistancesFound(int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32]);
+void enqueue(int cell);
+int dequeue();
 #endif
-

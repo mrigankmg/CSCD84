@@ -31,6 +31,10 @@
 
 #include "QLearn.h"
 
+int queue[max_graph_size];
+int front = 0;
+int queue_size = 0;
+
 void QLearn_update(int s, int a, double r, int s_new, double *QTable)
 {
  /*
@@ -160,8 +164,66 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
    /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
+	double distances_from_mouse[32][32];
+	for(int x = 0; x < size_X; x++) {
+		for(int y = 0; y < size_X; y++) {
+			distances_from_mouse[x][y] = INFINITY;
+		}
+	}
+	distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
+	int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+	BFS (gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
+	double reward = 0;
+	double cat_dist = distances_from_mouse[cats[0][0]][cats[0][1]];
+	double cheese_dist = distances_from_mouse[cheeses[0][0]][cheeses[0][1]];
 
-  return(0);		// <--- of course, you will change this as well!
+	//If mouse gets eaten by cat, give a negative reward. However, if it survives
+	//and if mouse eats cheese, then give a positive reward.
+	if(cat_dist == 0) {
+		reward -= 50;
+	} else if (cheese_dist == 0){
+		reward += 50;
+	} else {
+		//The farther the cheese, the less is added to reward, and the closer the cat,
+		//the more is subtracted from the reward.
+		reward = (1/cheese_dist)*25 - cat_dist*0.03;
+		double cat_cheese_dist_diff = cheese_dist - cat_dist;
+		//If cat is farther from mouse than cheese, then add to the reward
+		//depending on how far the cat is from the mouse. If cat is closer to mouse
+		//than cheese, then subtract from the reward depending on how close the cat
+		//is to the mouse.
+		if (cat_cheese_dist_diff <= -8) {
+				reward += 9;
+		} else if (cat_cheese_dist_diff <= -4) {
+				reward += 4;
+		} else if (cat_cheese_dist_diff <= 0) {
+				reward += 1;
+		} else if (cat_cheese_dist_diff >= 11) {
+				reward -= 12;
+		} else if (cat_cheese_dist_diff >= 6) {
+				reward -= 6;
+		} else if (cat_cheese_dist_diff >= 2) {
+				reward -= 2;
+		}
+		//If mouse is within 3 steps of getting closest cheese, then add more to
+		//the reward.
+		if (cheese_dist <= 2) {
+				reward += 10;
+		}
+		int wall_counter = 0;
+		//Count number of walls around mouse.
+		for(int x = 0; x < 4; x++) {
+			if (gr[mouse_index][x] == 0) {
+				wall_counter ++;
+			}
+		}
+		//If mouse is at a square with 3 walls around it and no cheese on the square
+		//then reduce the reward some more.
+		if(wall_counter == 3) {
+			reward -= 25;
+		}
+	}
+  return reward;
 }
 
 void feat_QLearn_update(double gr[max_graph_size][4],double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size)
@@ -267,3 +329,56 @@ void maxQsa(double gr[max_graph_size][4],double weights[25],int mouse_pos[1][2],
  *  Add any functions needed to compute your features below
  *                 ---->  THIS BOX <-----
  * *************************************************************************************************/
+
+ bool allDistancesFound(int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32]) {
+   //check if distance found to all cats
+   for(int x = 0; x < cats; x++) {
+       if(distances[cat_loc[x][0]][cat_loc[x][1]] == INFINITY) {
+           return false;
+       }
+   }
+   //check if distance found to all cheeses
+   for(int x = 0; x < cheeses; x++) {
+      if(distances[cheese_loc[x][0]][cheese_loc[x][1]] == INFINITY) {
+          return false;
+      }
+   }
+   //"empty" the queue
+   queue_size = 0;
+   front = 0;
+   return true;
+ }
+
+ void enqueue(int cell) {
+     //Add cell to the queue.
+     queue[queue_size + front] = cell;
+     queue_size++;
+ }
+
+ int dequeue() {
+     //Remove first value from queue.
+     int cell = queue[front];
+     front++;
+     queue_size--;
+     return cell;
+ }
+
+ void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32], int size_X) {
+     /* This function is used to calculate the BFS distance from the mouse to all cats, and cheeses.*/
+     enqueue(source_index);
+     while (!allDistancesFound(cat_loc, cats, cheese_loc, cheeses, distances)) {
+         int curr = dequeue();
+         int curr_x = curr % size_X;
+         int curr_y = curr / size_X;
+         for(int x = 0; x < 4; x++) {
+             //child is the index of the current child
+						 int child_x = curr_x - ((x - 2) % 2);
+						 int child_y = curr_y + ((x - 1) % 2);
+             int child = child_x + (child_y * size_X);
+             if(gr[curr][x] == 1 && distances[child_x][child_y] == INFINITY) {
+                 distances[child_x][child_y] = distances[curr_x][curr_y] + 1;
+                 enqueue(child);
+             }
+         }
+     }
+ }
