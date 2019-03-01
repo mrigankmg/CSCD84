@@ -55,12 +55,12 @@ void QLearn_update(int s, int a, double r, int s_new, double * QTable) {
    ***********************************************************************************************/
   double max_next = -INFINITY;
   for (int x = 0; x < 4; x++) {
-    double curr = * (QTable + (4 * s_new) + x);
+    double curr = *(QTable + (4 * s_new) + x);
     if (curr > max_next) {
       max_next = curr;
     }
   }
-  double curr_val = * (QTable + (4 * s) + a);
+  double curr_val = *(QTable + (4 * s) + a);
   *(QTable + (4 * s) + a) = curr_val + alpha * (r + lambda * max_next - curr_val);
 }
 
@@ -174,21 +174,20 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   double cat_dist = distances_from_mouse[cats[0][0]][cats[0][1]];
   double cheese_dist = distances_from_mouse[cheeses[0][0]][cheeses[0][1]];
 
-  //If mouse gets eaten by cat, give a negative reward. However, if it survives
-  //and if mouse eats cheese, then give a positive reward.
+  //If mouse gets eaten by cat, give a negative reward. However, if it survives and if mouse eats
+  //cheese, then give a positive reward. If none of these cases, then other computations are done.
   if (cat_dist == 0) {
     reward -= 50;
   } else if (cheese_dist == 0) {
     reward += 50;
   } else {
-    //The farther the cheese, the less is added to reward, and the closer the cat,
-    //the more is subtracted from the reward.
+    //The farther the cheese, the less is added to reward, and the closer the cat, the more is
+    //subtracted from the reward.
     reward = (1 / cheese_dist) * 25 - cat_dist * 0.03;
     double cat_cheese_dist_diff = cheese_dist - cat_dist;
-    //If cat is farther from mouse than cheese, then add to the reward
-    //depending on how far the cat is from the mouse. If cat is closer to mouse
-    //than cheese, then subtract from the reward depending on how close the cat
-    //is to the mouse.
+    //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
+    //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
+    //on how close the cat is to the mouse.
     if (cat_cheese_dist_diff <= -4) {
       reward += 9;
     } else if (cat_cheese_dist_diff <= -2) {
@@ -202,8 +201,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     } else if (cat_cheese_dist_diff >= 1) {
       reward -= 2;
     }
-    //If mouse is within 2 steps of getting closest cheese, then add more to
-    //the reward.
+    //If mouse is within 2 steps of getting cheese, then add more to the reward.
     if (cheese_dist <= 2) {
       reward += 10;
     }
@@ -214,8 +212,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
         wall_counter++;
       }
     }
-    //If mouse is at a square with 3 walls around it and no cheese on the square
-    //then reduce the reward some more.
+    //If mouse is at a square with 3 walls around it then reduce the reward some more.
     if (wall_counter == 3) {
       reward -= 50;
     }
