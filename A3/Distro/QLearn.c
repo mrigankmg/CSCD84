@@ -237,7 +237,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     //The farther the cheese, thefeature based learningo reward, and the closer the cat, the more is
     //subtracted from the reward.feature based learning
     //reward = cat_dist - cheese_dist;
-    reward = (1/ cheese_dist)*20 - cat_dist*0.80;
+    reward = (1/cheese_dist)*20 - cat_dist*0.80;
     double cat_cheese_dist_diff = cheese_dist - cat_dist;
     //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
     //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
@@ -268,7 +268,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
     }
     //If mouse is at a square with 3 walls around it then reduce the reward some more.
     if (wall_counter == 3) {
-      reward -= 25;
+      reward -= 50;
     }
     if(reward == 0) {
       reward = 1;
