@@ -141,7 +141,7 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
 
   // maybe do the randomization better
   int randChance = (int)100*pct;
-  int dieRoll = rand()%100+1;
+  int dieRoll = (rand()%100)+1;
   // maybe do the randomization better
   int move = 0;
   int currentMouseIndex = mouse_pos[0][0] + mouse_pos[0][1]*size_X;
@@ -227,8 +227,8 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   } else {
     //The farther the cheese, thefeature based learningo reward, and the closer the cat, the more is
     //subtracted from the reward.feature based learning
-    reward = cat_dist - cheese_dist;
-    /*reward = (1 / cheese_dist) * 25 - cat_dist * 0.03;
+    //reward = cat_dist - cheese_dist;
+    reward = (1/ cheese_dist)*25 - cat_dist*0.5;
     double cat_cheese_dist_diff = cheese_dist - cat_dist;
     //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
     //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
@@ -245,7 +245,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
       reward -= 6;
     } else if (cat_cheese_dist_diff >= 1) {
       reward -= 2;
-    }*/
+    }
     //If mouse is within 2 steps of getting cheese, then add more to the reward.
     if(reward == 0) {
       reward = 1;
