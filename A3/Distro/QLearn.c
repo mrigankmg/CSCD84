@@ -264,7 +264,7 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
       reward -= 50;
     }
   }
-  return reward;
+  return reward*(size_X/2);
 }
 
 void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double reward, int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -282,7 +282,6 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
    * TO DO: Complete this function
    ***********************************************************************************************/
 
-
   double* maxU; //max q value given current state
   int* maxA; //max action
   maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, maxU, maxA);
@@ -291,10 +290,12 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
   double features[25];  
   evaluateFeatures(gr, features, mouse_pos, cats, cheeses, size_X, graph_size);
 
-  double tdp = (reward + lambda*(defU));
+  //evaluate current QVal
+  double currentQVal = Qsa(weights, features);
+  double tdp = (reward + lambda*(defU)) - currentQVal;
 
   for (int i = 0; i < 25; i++){
-    weights[i] += alpha*tdp;
+    weights[i] += alpha*tdp*features[i];
   }
 }
 
@@ -319,13 +320,45 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
 
   // maybe do the randomization better
   int randChance = (int)100*pct;
-  int dieRoll = rand()%100+1;
+  int dieRoll = rand()%100+1;0;
   // maybe do the randomization better
   int move = 0;
- 
+  int currentMouseIndex = mouse_pos[0][0] + mouse_pos[0][1]*size_X;
 
-  return (0); // <--- replace this while you're at it!
 
+  // if below exploit
+  if (randChance >= dieRoll){
+    int* bestMove;
+    double* bestStateValue;
+    maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, bestStateValue, bestMove);
+    // consider current state and do the best move
+    move = *bestMove;
+  // o/w explore
+  } else {
+    int initMoves[4];
+    // should always be positive by assumption
+    int counter = 0;
+    for (int i = 0; i < 4; i++){
+      initMoves[i] = -1;
+    }
+    for (int i = 0; i < 4; i++){
+      if (gr[currentMouseIndex][i]){
+        initMoves[i] = i;
+        counter++;
+      }
+    }
+    int availableMoves[counter];
+    int nCounter = 0;
+    for (int j = 0; j < 4; j++){
+        if (initMoves[j] != -1){
+          availableMoves[nCounter] = initMoves[j];
+          nCounter++;
+        }
+    }
+    int randMove = rand()%counter;
+    move = availableMoves[randMove];
+  }
+  return move;
 }
 
 void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -424,7 +457,7 @@ double Qsa(double weights[25], double features[25]) {
     ret += weights[i]*features[i];
   }
 
-  return ret; // <--- stub! compute and return the Qsa value
+  return ret;
 }
 
 void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size, double * maxU, int * maxA) {
@@ -440,6 +473,8 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
+
+
 
   * maxU = 0; // <--- stubs! your code will compute actual values for these two variables!
   * maxA = 0;
