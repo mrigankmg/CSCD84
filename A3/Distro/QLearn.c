@@ -412,12 +412,12 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
      }
    }
 
-   double maxCat = -INFINITY;
+   double minCat = INFINITY;
    double minCheese = INFINITY;
 
    for (int i = 0; i < numberOfCats; i++){
-     if (distances_from_mouse[cats[i][0]][cats[i][1]] > maxCat){
-       maxCat = distances_from_mouse[cats[i][0]][cats[i][1]];
+     if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
+       minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
      }
    }
 
@@ -441,7 +441,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
    features[0] = 1.0/(minCheese+1.0);
-   features[1] = 1 + (-1)*1.0/(maxCat+1.0);
+   features[1] = 1 + (-1)*1.0/(minCat+1.0);
 }
 
 double Qsa(double weights[25], double features[25]) {
