@@ -399,23 +399,35 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
        distances_from_mouse[x][y] = INFINITY;
      }
    }
+<<<<<<< HEAD
    distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
    int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
    //BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
+=======
+>>>>>>> a73774f59cca7b05932b479d0903ada814971d6e
 
    int numberOfCheese = 0;
    int numberOfCats = 0;
 
-   for (int j = 0; j < 5; j++){
-     //only need to check one coordinate
-     if (cats[j][0] != -1){
+   for (int x = 0; x < 5; x++){
+   //only need to check one coordinate
+     if (cats[x][0] != -1){
        numberOfCats++;
      }
-     if (cheeses[j][0] != -1){
+     if (cheeses[x][0] != -1){
        numberOfCheese++;
      }
    }
 
+<<<<<<< HEAD
+=======
+   distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
+   int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+   BFS(gr, mouse_index, cats, numberOfCats, cheeses, numberOfCheese, distances_from_mouse, size_X);
+
+   double minCat = INFINITY;
+   double minCheese = INFINITY;
+>>>>>>> a73774f59cca7b05932b479d0903ada814971d6e
 
   double minCatMan = INFINITY;
   double minCheeseMan = INFINITY;
@@ -491,16 +503,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    if (wall_counter == 3) {
      wall_reward = 20;
    }
-
-  
-
-   //printf("Max Cat: %f\n", maxCat);
-   //printf("Max Cheese: %f\n", maxCheese);
-
-   //assume values int cats, cheeses are non -1 for the first catsInGame, cheeseInGame indices
-
-   // int catsInGame[numberOfCats];
-   // int cheeseInGame[numberOfCheese];
 
    //feature 1 - closest cheese via gaussian func
    //feature 2 - closest cat via gaussian func
