@@ -325,7 +325,49 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
    ***********************************************************************************************/
 
   // maybe do the randomization better
-  return 0;
+  int randChance = (int)100*pct;
+  int dieRoll = rand()%100+1;0;
+  // maybe do the randomization better
+  int move = 0;
+  int currentMouseIndex = mouse_pos[0][0] + mouse_pos[0][1]*size_X;
+
+  // if below exploit
+  if (randChance >= dieRoll) {
+    int bm = 0;
+    int* bestMove;
+    bestMove = &bm;
+    double bsv = 0;
+    double* bestStateValue;
+    bestStateValue = &bsv;
+    maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, bestStateValue, bestMove);
+    // consider current state and do the best move
+    move = *bestMove;
+  // o/w explore
+  } else {
+    int initMoves[4];
+    // should always be positive by assumption
+    int counter = 0;
+    for (int i = 0; i < 4; i++){
+      initMoves[i] = -1;
+    }
+    for (int i = 0; i < 4; i++){
+      if (gr[currentMouseIndex][i]){
+        initMoves[i] = i;
+        counter++;
+      }
+    }
+    int availableMoves[counter];
+    int nCounter = 0;
+    for (int j = 0; j < 4; j++){
+        if (initMoves[j] != -1){
+          availableMoves[nCounter] = initMoves[j];
+          nCounter++;
+        }
+    }
+    int randMove = rand()%counter;
+    move = availableMoves[randMove];
+  }
+  return move;
 }
 
 void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -347,7 +389,65 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-  return;
+   double distances_from_mouse[32][32];
+   for (int x = 0; x < size_X; x++) {
+     for (int y = 0; y < size_X; y++) {
+       distances_from_mouse[x][y] = INFINITY;
+     }
+   }
+   distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
+   int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+   BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
+   double cat_dist = distances_from_mouse[cats[0][0]][cats[0][1]];
+   double cheese_dist = distances_from_mouse[cheeses[0][0]][cheeses[0][1]];
+
+   int numberOfCheese = 0;
+   int numberOfCats = 0;
+
+   for (int j = 0; j<5; j++){
+     //only need to check one coordinate
+     if (cats[j][0] != -1){
+       numberOfCats++;
+     }
+     if (cheeses[j][0] != -1){
+       numberOfCheese++;
+     }
+   }
+
+   double maxCat = -INFINITY;
+   double maxCheese = -INFINITY;
+
+   for (int i = 0; i < numberOfCats; i++){
+     if (distances_from_mouse[cats[i][0]][cats[i][1]] > maxCat){
+       maxCat = distances_from_mouse[cats[i][0]][cats[i][1]];
+     }
+   }
+
+   for (int i = 0; i < numberOfCheese; i++){
+     if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] > maxCheese){
+       maxCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
+     }
+   }
+
+   for (int i = 0; i < numberOfCheese; i++){}
+
+   //assume values int cats, cheeses are non -1 for the first catsInGame, cheeseInGame indices
+
+   // int catsInGame[numberOfCats];
+   // int cheeseInGame[numberOfCheese];
+
+   //feature 1 - closest cheese via gaussian func
+   //feature 2 - closest cat via gaussian func
+   //new features - deadends and corners possibly
+   //also new features - maybe mean distance between cats/cheeses
+
+   for (int i = 0; i < numFeatures; i++){
+     switch(i){
+       case 1: features[i] = (double)1.0/(maxCheese+1.0);
+       case 2: features[i] = (double)1.0/(maxCat+1.0);
+       default: features[i] = (double)0;
+     }
+   }
 }
 
 double Qsa(double weights[25], double features[25]) {
@@ -358,7 +458,12 @@ double Qsa(double weights[25], double features[25]) {
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-  return 0;
+   double ret = 0;
+   //maybe make # features less than 25 (depending on how many features we have)
+   for (int i = 0; i < numFeatures; i++){
+     ret += weights[i]*features[i];
+   }
+   return ret;
 }
 
 void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size, double * maxU, int * maxA) {
