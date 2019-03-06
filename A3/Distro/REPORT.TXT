@@ -12,15 +12,15 @@ ________________________________________________
 
 Student Name 1 (last, first): Mrigank Mehta
 
-Student Name 2 (last, first):
+Student Name 2 (last, first): Huang Zhi Zhong
 
 Student number 1: 1001309014
 
-Student number 2:
+Student number 2: 1002671094
 
 UTORid 1: mehtamri
 
-UTORid 2:
+UTORid 2: huang472
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _Mrigank_Mehta_	_(student 2 name here)__
+	Signed: _Mrigank_Mehta_	_Zhi Zhong Huang__
 
 
 (-5 marks for failing to provide the identifying
@@ -84,7 +84,7 @@ but explain carefully when needed.
      Average rate for Experiement 3 and Experiment 4: Average of Experiment 3 = 33.3165%, Average of Experiment 4 = 47.1141% 
 
      (1 mark) Compare with the rate obtained in experiment 2. What is happening here?
-	A: The rate is a lot lower for Experiment 3 and Experiment 4, since the environemnt isn't static from Experiment 2, the one on which the mouse was actually trained.
+	A: The rate is a lot lower for Experiment 3 and Experiment 4, since the environment isn't static from Experiment 2, the one on which the mouse was actually trained.
 	   In other words, since the environment layout changes the mouse doesn't know how to perform on it, and thus performs poorly.
 
 5 .- Understanding the effects of state space on learning ability:

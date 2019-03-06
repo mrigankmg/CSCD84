@@ -441,7 +441,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
    features[0] = 1.0/(maxCheese+1.0);
-   features[1] = 1.0/(maxCat+1.0);
+   features[1] = 1 + (-1)*1.0/(maxCat+1.0);
 }
 
 double Qsa(double weights[25], double features[25]) {
