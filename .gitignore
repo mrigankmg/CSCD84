@@ -5,3 +5,4 @@ MiniMax_search
 QLearn
 QLearn.o
 .DS_Store
+*.dat
