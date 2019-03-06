@@ -398,13 +398,11 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
    int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
    BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
-   double cat_dist = distances_from_mouse[cats[0][0]][cats[0][1]];
-   double cheese_dist = distances_from_mouse[cheeses[0][0]][cheeses[0][1]];
 
    int numberOfCheese = 0;
    int numberOfCats = 0;
 
-   for (int j = 0; j<5; j++){
+   for (int j = 0; j < 5; j++){
      //only need to check one coordinate
      if (cats[j][0] != -1){
        numberOfCats++;
@@ -428,6 +426,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
        maxCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
      }
    }
+   //printf("Max Cat: %f\n", maxCat);
+   //printf("Max Cheese: %f\n", maxCheese);
 
    for (int i = 0; i < numberOfCheese; i++){}
 
@@ -440,14 +440,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    //feature 2 - closest cat via gaussian func
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
-
-   for (int i = 0; i < numFeatures; i++){
-     switch(i){
-       case 1: features[i] = (double)1.0/(maxCheese+1.0);
-       case 2: features[i] = (double)1.0/(maxCat+1.0);
-       default: features[i] = (double)0;
-     }
-   }
+   features[0] = 1.0/(maxCheese+1.0);
+   features[1] = 1.0/(maxCat+1.0);
 }
 
 double Qsa(double weights[25], double features[25]) {
@@ -462,7 +456,9 @@ double Qsa(double weights[25], double features[25]) {
    //maybe make # features less than 25 (depending on how many features we have)
    for (int i = 0; i < numFeatures; i++){
      ret += weights[i]*features[i];
+     //printf("Feature %d %f\n", i, features[i]);
    }
+   //printf("%f\n", ret);
    return ret;
 }
 
@@ -479,8 +475,8 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-   double u = -INFINITY;
-   maxU = &u;
+   //double u = -INFINITY;
+   *maxU = -INFINITY;
    int numberOfCats = 0;
    for (int x = 0; x < 5; x++) {
      if (cats[x][0] != -1) {
@@ -489,15 +485,21 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
    }
    int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
    for(int x = 0; x < 4; x++) {
+     if(x == 0) {
+       printf("=========Loop Start=========\n");
+     }
      if (gr[mouse_index][x]) {
        int temp_mouse_pos[1][2];
        temp_mouse_pos[0][0] = mouse_pos[0][0] - ((x - 2) % 2);
        temp_mouse_pos[0][1] = mouse_pos[0][1] + ((x - 1) % 2);
        double curr = maxQsaHelper(gr, weights, temp_mouse_pos, cats, numberOfCats, 0, cheeses, size_X, graph_size);
        if (curr > * maxU) {
-         maxU = &curr;
-         maxA = &x;
+         *maxU = curr;
+         *maxA = x;
        }
+       printf("Curr: %f\n", curr);
+       printf("Max: %f\n", * maxU);
+       printf("Max A: %d\n", * maxA);
      }
    }
 }
@@ -574,6 +576,7 @@ double maxQsaHelper(double gr[max_graph_size][4], double weights[25], int mouse_
       double features[25];
       evaluateFeatures(gr, features, mouse_pos, cats, cheeses, size_X, graph_size);
       double curr_q = Qsa(weights, features);
+      printf("Curr %d Q: %f\n", counter, curr_q);
       if (curr_q > next_max && curr_q > curr_max) {
         curr_max = curr_q;
       } else if (curr_q <= next_max && next_max > curr_max) {
