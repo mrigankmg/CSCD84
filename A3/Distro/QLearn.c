@@ -333,7 +333,7 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
 }
 
 double manhat(int h1, int h2, int g1, int g2){
-  return abs(h1 - g1) + abs(h2 - g2);
+  return sqrt(pow(abs(h1 - g1), 2) + pow(abs(h2 - g2), 2));
 }
 
 void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -378,7 +378,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
 
   double minCatMan = INFINITY;
   double minCheeseMan = INFINITY;
-  
+
   for (int i = 0; i < numberOfCats; i++){
      if (manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]) < minCatMan){
        minCatMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]);
@@ -391,20 +391,20 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
      }
    }
 
-  //  double minCat = INFINITY;
-  //  double minCheese = INFINITY;
+    /*double minCat = INFINITY;
+    double minCheese = INFINITY;
 
-  //  for (int i = 0; i < numberOfCats; i++){
-  //    if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
-  //      minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
-  //    }
-  //  }
+    for (int i = 0; i < numberOfCats; i++){
+      if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
+        minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
+      }
+    }
 
-  //  for (int i = 0; i < numberOfCheese; i++){
-  //    if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
-  //      minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
-  //    }
-  //  }
+    for (int i = 0; i < numberOfCheese; i++){
+      if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
+        minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
+      }
+    }*/
 
    double cat_cheese_dist_diff_reward = 0;
    //double cat_cheese_dist_diff = minCheese - minCat;
@@ -414,17 +414,19 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
    //on how close the cat is to the mouse.
    if (cat_cheese_dist_diff <= -8) {
-     cat_cheese_dist_diff_reward += 108 * size_factor;
+     cat_cheese_dist_diff_reward = 108 * size_factor;
    } else if (cat_cheese_dist_diff <= -4) {
-     cat_cheese_dist_diff_reward += 90 * size_factor;
+     cat_cheese_dist_diff_reward = 90 * size_factor;
    } else if (cat_cheese_dist_diff <= 0) {
-     cat_cheese_dist_diff_reward += 72 * size_factor;
+     cat_cheese_dist_diff_reward = 72 * size_factor;
+   } else if (cat_cheese_dist_diff >= 15) {
+     cat_cheese_dist_diff_reward = 0;
    } else if (cat_cheese_dist_diff >= 11) {
-     cat_cheese_dist_diff_reward += 54 * size_factor;
+     cat_cheese_dist_diff_reward = 18 * size_factor;
    } else if (cat_cheese_dist_diff >= 6) {
-     cat_cheese_dist_diff_reward += 36 * size_factor;
-   } else if (cat_cheese_dist_diff >= 1) {
-     cat_cheese_dist_diff_reward += 18 * size_factor;
+     cat_cheese_dist_diff_reward = 36 * size_factor;
+   } else if (cat_cheese_dist_diff > 0) {
+     cat_cheese_dist_diff_reward = 54 * size_factor;
    }
 
   int wall_counter = 0;
@@ -451,25 +453,15 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
      wall_reward = 20;
    }
 
-  
-
-   //printf("Max Cat: %f\n", maxCat);
-   //printf("Max Cheese: %f\n", maxCheese);
-
-   //assume values int cats, cheeses are non -1 for the first catsInGame, cheeseInGame indices
-
-   // int catsInGame[numberOfCats];
-   // int cheeseInGame[numberOfCheese];
-
    //feature 1 - closest cheese via gaussian func
    //feature 2 - closest cat via gaussian func
    //feature 3 - difference between minimum cheese distance and minimum cat distance
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
-   features[0] = 1.0/(minCheeseMan+1.0);
-   features[1] = 1 - 1.0/(minCatMan+1.0);
-   features[2] = 1 - 1/cat_cheese_dist_diff_reward;
-   features[3] = 1/(1+wall_reward);
+   features[0] = 1/(minCheeseMan + 1);
+   features[1] = 1 - 1/(minCatMan + 1);
+   features[2] = 1 - 1/(cat_cheese_dist_diff_reward + 1);
+   features[3] = 1/(wall_reward + 1);
 }
 
 double Qsa(double weights[25], double features[25]) {
