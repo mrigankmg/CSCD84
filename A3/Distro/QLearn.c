@@ -426,6 +426,19 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
        minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
      }
    }
+
+   int wall_counter = 0;
+   //Count number of walls around mouse.
+   for (int x = 0; x < 4; x++) {
+     if (gr[mouse_index][x] == 0) {
+       wall_counter++;
+     }
+   }
+   int wall_reward = 0;
+   //If mouse is at a square with 3 walls around it then reduce the reward some more.
+   if (wall_counter == 3 && minCheese > 0) {
+     wall_reward = 50;
+   }
    //printf("Max Cat: %f\n", maxCat);
    //printf("Max Cheese: %f\n", maxCheese);
 
@@ -441,7 +454,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
    features[0] = 1.0/(minCheese+1.0);
-   features[1] = 1 + (-1)*1.0/(minCat+1.0);
+   features[1] = 1 - 1.0/(minCat+1.0);
+   features[2] = 1/(1 + wall_reward);
 }
 
 double Qsa(double weights[25], double features[25]) {
@@ -485,9 +499,6 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
    }
    int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
    for(int x = 0; x < 4; x++) {
-     if(x == 0) {
-       printf("=========Loop Start=========\n");
-     }
      if (gr[mouse_index][x]) {
        int temp_mouse_pos[1][2];
        temp_mouse_pos[0][0] = mouse_pos[0][0] - ((x - 2) % 2);
@@ -497,9 +508,6 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
          *maxU = curr;
          *maxA = x;
        }
-       printf("Curr: %f\n", curr);
-       printf("Max: %f\n", * maxU);
-       printf("Max A: %d\n", * maxA);
      }
    }
 }
@@ -576,7 +584,6 @@ double maxQsaHelper(double gr[max_graph_size][4], double weights[25], int mouse_
       double features[25];
       evaluateFeatures(gr, features, mouse_pos, cats, cheeses, size_X, graph_size);
       double curr_q = Qsa(weights, features);
-      printf("Curr %d Q: %f\n", counter, curr_q);
       if (curr_q > next_max && curr_q > curr_max) {
         curr_max = curr_q;
       } else if (curr_q <= next_max && next_max > curr_max) {
