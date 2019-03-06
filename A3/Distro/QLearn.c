@@ -460,13 +460,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    if (wall_counter == 3 && minCheese > 0) {
      wall_reward = 50;
    }*/
-   //printf("Max Cat: %f\n", maxCat);
-   //printf("Max Cheese: %f\n", maxCheese);
-
-   //assume values int cats, cheeses are non -1 for the first catsInGame, cheeseInGame indices
-
-   // int catsInGame[numberOfCats];
-   // int cheeseInGame[numberOfCheese];
 
    //feature 1 - closest cheese via gaussian func
    //feature 2 - closest cat via gaussian func
