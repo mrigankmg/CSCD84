@@ -413,7 +413,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    }
 
    double maxCat = -INFINITY;
-   double maxCheese = -INFINITY;
+   double minCheese = INFINITY;
 
    for (int i = 0; i < numberOfCats; i++){
      if (distances_from_mouse[cats[i][0]][cats[i][1]] > maxCat){
@@ -422,8 +422,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    }
 
    for (int i = 0; i < numberOfCheese; i++){
-     if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] > maxCheese){
-       maxCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
+     if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
+       minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
      }
    }
    //printf("Max Cat: %f\n", maxCat);
@@ -440,7 +440,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    //feature 2 - closest cat via gaussian func
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
-   features[0] = 1.0/(maxCheese+1.0);
+   features[0] = 1.0/(minCheese+1.0);
    features[1] = 1 + (-1)*1.0/(maxCat+1.0);
 }
 
