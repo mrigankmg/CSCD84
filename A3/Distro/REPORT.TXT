@@ -42,6 +42,8 @@ but explain carefully when needed.
       are used, and why you think this is a good reward function
       for this problem.
 
+
+
 2 .- These are multiple experiments (once you are sure your
      QLearning code is working!)
 
@@ -51,18 +53,18 @@ but explain carefully when needed.
      (1 mark) # Experiment 1, 10000 training trials, 20 rounds, random seed 1522,
      # 8x8 grid, cat-smartness .9
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 6.0484%
 
      Train your mouse, and once trained, run the evaluation and
-     record the mouse winning rate:
+     record the mouse winning rate: 83.8225%
 
      (1 mark) # Experiment 2, 1000000 training trials, 50 rounds, random seed 1522,
      # 8x8 grid, cat-smartness .9
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 6.4436%
 
      Train your mouse, and once trained, run the evaluation and
-     record the mouse winning rate:
+     record the mouse winning rate: 90.4653%
 
      (1 mark) Would the mouse keep improving and become invincible if
      you ran, say, 100,000,000 training rounds per batch?
@@ -72,16 +74,18 @@ but explain carefully when needed.
      (1 mark) # Experiment 3 - Run the evaluation on the 8x8 grid, cat-smartness=.9,
      # but using the random seed 4289 for the game.
 
-     Mouse Winning Rate:
+     Mouse Winning Rate: 33.3408%
 
      (2 mark) # Experiment 4 - Run the evaluation on the 8x8 grid, cat-smartness=.9,
      # but using the random seed 31415 for the game.
 
-     Mouse Winning Rate:
+     Mouse Winning Rate: 47.4143%
 
-     Average rate for Experiement 3 and Experiment 4:
+     Average rate for Experiement 3 and Experiment 4: Average of Experiment 3 = 33.3165%, Average of Experiment 4 = 47.1141% 
 
      (1 mark) Compare with the rate obtained in experiment 2. What is happening here?
+	A: The rate is a lot lower for Experiment 3 and Experiment 4, since the environemnt isn't static from Experiment 2, the one on which the mouse was actually trained.
+	   In other words, since the environment layout changes the mouse doesn't know how to perform on it, and thus performs poorly.
 
 5 .- Understanding the effects of state space on learning ability:
 
