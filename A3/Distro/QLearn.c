@@ -556,7 +556,10 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
        int temp_mouse_pos[1][2];
        temp_mouse_pos[0][0] = mouse_pos[0][0] - ((x - 2) % 2);
        temp_mouse_pos[0][1] = mouse_pos[0][1] + ((x - 1) % 2);
-       double curr = maxQsaHelper(gr, weights, temp_mouse_pos, cats, numberOfCats, 0, cheeses, size_X, graph_size);
+       double features[25];
+      evaluateFeatures(gr, features, temp_mouse_pos, cats, cheeses, size_X, graph_size);
+       //double curr = maxQsaHelper(gr, weights, temp_mouse_pos, cats, numberOfCats, 0, cheeses, size_X, graph_size);
+       double curr = Qsa(weights, features);
        if (curr > * maxU) {
          *maxU = curr;
          *maxA = x;
