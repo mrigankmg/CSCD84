@@ -287,7 +287,7 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
   maxQsa(gr, weights, mouse_pos, cats, cheeses, size_X, graph_size, maxU, maxA);
   double defU = *maxU;
   //need current Qsa value as well
-  double features[25];  
+  double features[25];
   evaluateFeatures(gr, features, mouse_pos, cats, cheeses, size_X, graph_size);
 
   //evaluate current QVal
@@ -400,7 +400,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     if (cats[j][0] != -1){
       numberOfCats++;
     }
-    if (cheeses[j][0] != -1){  
+    if (cheeses[j][0] != -1){
       numberOfCheese++;
     }
   }
@@ -473,13 +473,28 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
+   * maxU = -INFINITY;
+   int numberOfCats = 0;
 
+   for (int x = 0; x < 5; x++) {
+     if (cats[x][0] != -1) {
+       numberOfCats++;
+     }
+   }
 
-
-  * maxU = 0; // <--- stubs! your code will compute actual values for these two variables!
-  * maxA = 0;
-  return;
-
+   int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+   for (int x = 0; x < 4; x++) {
+     if (gr[mouse_index][x]) {
+       int temp_mouse_pos[1][2];
+       temp_mouse_pos[0][0] = mouse_pos[0][0] - ((x - 2) % 2);
+       temp_mouse_pos[0][1] = mouse_pos[0][1] + ((x - 1) % 2);
+       double curr = maxQsaHelper(gr, weights, temp_mouse_pos, cats, numberOfCats, 0, cheeses, size_X, graph_size);
+       if (curr > * maxU) {
+         * maxU = curr;
+         * maxA = x;
+       }
+     }
+   }
 }
 
 /***************************************************************************************************
@@ -538,4 +553,28 @@ void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int 
       }
     }
   }
+}
+
+double maxQsaHelper(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int numCats, int counter, int cheeses[5][2], int size_X, int graph_size) {
+  if (counter == numCats) {
+    return -INFINITY;
+  }
+  int cat_index = cats[counter][0] + (cats[counter][1] * size_X);
+  double curr_max = -INFINITY;
+  for (int y = 0; y < 4; y++) {
+    if (gr[cat_index][y]) {
+      cats[counter][0] = cats[counter][0] - ((y - 2) % 2);
+      cats[counter][1] = cats[counter][1] + ((y - 1) % 2);
+      double next_max = maxQsaHelper(gr, weights, mouse_pos, cats, numCats, counter + 1, cheeses, size_X, graph_size);
+      double features[25];
+      evaluateFeatures(gr, features, mouse_pos, cats, cheeses, size_X, graph_size);
+      double curr_q = Qsa(weights, features);
+      if (curr_q > next_max && curr_q > curr_max) {
+        curr_max = curr_q;
+      } else if (curr_q <= next_max && next_max > curr_max) {
+        curr_max = next_max;
+      }
+    }
+  }
+  return curr_max;
 }

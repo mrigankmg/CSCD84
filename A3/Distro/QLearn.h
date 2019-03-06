@@ -51,4 +51,5 @@ void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int 
 bool allDistancesFound(int cat_loc[5][2], int cats, int cheese_loc[5][2], int cheeses, double distances[32][32]);
 void enqueue(int cell);
 int dequeue();
+double maxQsaHelper(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int numCats, int counter, int cheeses[5][2], int size_X, int graph_size);
 #endif
