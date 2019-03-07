@@ -28,7 +28,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _Mrigank_Mehta_	_Zhi Zhong Huang__
+	Signed: _Mrigank_Mehta_	_Zhi_Zhong_Huang_
 
 
 (-5 marks for failing to provide the identifying
@@ -81,7 +81,7 @@ but explain carefully when needed.
 
      Mouse Winning Rate: 47.4143%
 
-     Average rate for Experiement 3 and Experiment 4: Average of Experiment 3 = 33.3165%, Average of Experiment 4 = 47.1141% 
+     Average rate for Experiement 3 and Experiment 4: Average of Experiment 3 = 33.3165%, Average of Experiment 4 = 47.1141%
 
      (1 mark) Compare with the rate obtained in experiment 2. What is happening here?
 	A: The rate is a lot lower for Experiment 3 and Experiment 4, since the environment isn't static from Experiment 2, the one on which the mouse was actually trained.
@@ -175,26 +175,26 @@ Mark with an 'x' where appropriate. If something is only
 working partially, briefly describe what works, what
 doesn't work, or what problems exist.
 
-			Complete/Working	Partial		Not done
+			                 Complete/Working	   Partial		Not done
 
 QLearn
- update
+ update                      [x]
 
 Reward
- function
+ function                    [x]
 
 Decide
- action
+ action                      [x]
 
-featureEval
+featureEval                  [x]
 
-evaluateQsa
+evaluateQsa                  [x]
 
-maxQsa_prime
+maxQsa_prime                 [x]
 
-Qlearn_features
+Qlearn_features              [x]
 
-decideAction_features
+decideAction_features        [x]
 
 _____________________________________________________
 
