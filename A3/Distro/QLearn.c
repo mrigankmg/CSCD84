@@ -1,31 +1,23 @@
 /*
 	CSC D84 - Unit 3 - Reinforcement Learning
-
 	This file contains stubs for implementing the Q-Learning method
 	for reinforcement learning as discussed in lecture. You have to
 	complete two versions of Q-Learning.
-
 	* Standard Q-Learning, based on a full-state representation and
 	  a large Q-Table
 	* Feature based Q-Learning to handle problems too big to allow
 	  for a full-state representation
-
 	Read the assignment handout carefully, then implement the
 	required functions below. Sections where you have to add code
 	are marked
-
 	**************
 	*** TO DO:
 	**************
-
 	If you add any helper functions, make sure you document them
 	properly and indicate in the report.txt file what you added.
-
 	Have fun!
-
 	DO NOT FORGET TO 'valgrind' YOUR CODE - We will check for pointer
 	management being done properly, and for memory leaks.
-
 	Starter code: F.J.E. Jan. 16
 */
 
@@ -40,13 +32,10 @@ void QLearn_update(int s, int a, double r, int s_new, double * QTable) {
   /*
     This function implementes the Q-Learning update as stated in Lecture. It
     receives as input a <s,a,r,s'> tuple, and updates the Q-table accordingly.
-
     Your work here is to calculate the required update for the Q-table entry
     for state s, and apply it to the Q-table
-
     The update involves two constants, alpha and lambda, which are defined in QLearn.h - you should not
     have to change their values. Use them as they are.
-
     Details on how states are used for indexing into the QTable are shown
     below, in the comments for QLearn_action. Be sure to read those as well!
   */
@@ -78,64 +67,44 @@ int QLearn_action(double gr[max_graph_size][4], int mouse_pos[1][2], int cats[5]
      - A 'pct' value in [0,1] indicating the amount of time the mouse uses the QTable to decide its action,
        for example, if pct=.25, then 25% of the time the mouse uses the QTable to choose its action,
        the remaining 75% of the time it chooses randomly among the available actions.
-
      Remember that the training process involves random exploration initially, but as training
      proceeds we use the QTable more and more, in order to improve our QTable values around promising
      actions.
-
      The value of pct is controlled by QLearn_core_GL, and increases with each round of training.
-
      This function *must return* an action index in [0,3] where
         0 - move up
         1 - move right
         2 - move down
         3 - move left
-
      QLearn_core_GL will print a warning if your action makes the mouse cross a wall, or if it makes
      the mouse leave the map - this should not happen. If you see a warning, fix the code in this
      function!
-
    The Q-table has been pre-allocated and initialized to 0. The Q-table has
    a size of
-
         graph_size^3 x 4
-
    This is because the table requires one entry for each possible state, and
    the state is comprised of the position of the mouse, cat, and cheese.
    Since each of these agents can be in one of graph_size positions, all
    possible combinations yield graph_size^3 states.
-
    Now, for each state, the mouse has up to 4 possible moves (up, right,
    down, and left). We ignore here the fact that some moves are not possible
    from some states (due to walls) - it is up to the QLearn_action() function
    to make sure the mouse never crosses a wall.
-
    So all in all, you have a big table.
-
    For example, on an 8x8 maze, the Q-table will have a size of
-
        64^3 x 4  entries
-
        with
-
        size_X = 8		<--- size of one side of the maze
        graph_size = 64		<--- Total number of nodes in the graph
-
    Indexing within the Q-table
-
      say the mouse is at   i,j
          the cat is at     k,l
          the cheese is at  m,n
-
      state = (i+(j*size_X)) + ((k+(l*size_X))*graph_size) + ((m+(n*size_X))*graph_size*graph_size)
      ** Make sure you undestand the state encoding above!
-
      Entries in the Q-table for this state are
-
      *(QTable+(4*state)+a)      <-- here a is the action in [0,3]
-
      (yes, it's a linear array, no shorcuts with brackets!)
-
      NOTE: There is only one cat and once cheese, so you only need to use cats[0][:] and cheeses[0][:]
    */
 
@@ -205,14 +174,11 @@ double QLearn_reward(double gr[max_graph_size][4], int mouse_pos[1][2], int cats
   /*
     This function computes and returns a reward for the state represented by the input mouse, cat, and
     cheese position.
-
     You can make this function as simple or as complex as you like. But it should return positive values
     for states that are favorable to the mouse, and negative values for states that are bad for the
     mouse.
-
     I am providing you with the graph, in case you want to do some processing on the maze in order to
     decide the reward.
-
     This function should return a maximim/minimum reward when the mouse eats/gets eaten respectively.
    */
 
@@ -291,7 +257,6 @@ void feat_QLearn_update(double gr[max_graph_size][4], double weights[25], double
     you receive the current state (mouse, cats, and cheese potisions), and the reward
     associated with this action (this is called immediately after the mouse makes a move,
     so implicit in this is the mouse having selected some action)
-
     Your code must then evaluate the update and apply it to the weights in the weight array.
    */
 
@@ -325,13 +290,10 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
   /*
     Similar to its counterpart for standard Q-learning, this function returns the index of the next
     action to be taken by the mouse.
-
     Once more, the 'pct' value controls the percent of time that the function chooses an optimal
     action given the current policy.
-
     E.g. if 'pct' is .15, then 15% of the time the function uses the current weights and chooses
     the optimal action. The remaining 85% of the time, a random action is chosen.
-
     As before, the mouse must never select an action that causes it to walk through walls or leave
     the maze.
    */
@@ -391,18 +353,19 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
   return move;
 }
 
+double manhat(int h1, int h2, int g1, int g2) {
+  return sqrt(pow(abs(h1 - g1), 2) + pow(abs(h2 - g2), 2));
+}
+
 void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
   /*
    This function evaluates all the features you defined for the game configuration given by the input
    mouse, cats, and cheese positions. You are free to define up to 25 features. This function will
    evaluate each, and return all the feature values in the features[] array.
-
    Take some time to think about what features would be useful to have, the better your features, the
    smarter your mouse!
-
    Note that instead of passing down the number of cats and the number of cheese chunks (too many parms!)
    the arrays themselves will tell you what are valid cat/cheese locations.
-
    You can have up to 5 cats and up to 5 cheese chunks, and array entries for the remaining cats/cheese
    will have a value of -1 - check this when evaluating your features!
   */
@@ -424,57 +387,95 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    int numberOfCheese = 0;
    int numberOfCats = 0;
 
+<<<<<<< HEAD
    //checking number of cats/cheese given input
    for (int j = 0; j < 5; j++){
      if (cats[j][0] != -1){
+=======
+   for (int x = 0; x < 5; x++){
+     //only need to check one coordinate
+     if (cats[x][0] != -1){
+>>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
        numberOfCats++;
      }
-     if (cheeses[j][0] != -1){
+     if (cheeses[x][0] != -1){
        numberOfCheese++;
      }
    }
 
-   double minCat = INFINITY;
-   double minCheese = INFINITY;
+  /*double minCatMan = INFINITY;
+  double minCheeseMan = INFINITY;
 
+<<<<<<< HEAD
    //calculate distance to nearest cat
    for (int i = 0; i < numberOfCats; i++){
      if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
        minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
+=======
+  for (int i = 0; i < numberOfCats; i++){
+     if (manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]) < minCatMan){
+       minCatMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]);
+>>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
      }
    }
 
    //calculate distance to nearest cheese
    for (int i = 0; i < numberOfCheese; i++){
-     if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
-       minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
+     if (manhat(mouse_pos[0][0], mouse_pos[0][1],cheeses[i][0],cheeses[i][1]) < minCheeseMan){
+       minCheeseMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cheeses[i][0],cheeses[i][1]);
      }
-   }
+   }*/
+
+    double minCat = INFINITY;
+    double minCheese = INFINITY;
+
+    for (int i = 0; i < numberOfCats; i++){
+      if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
+        minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
+      }
+    }
+
+    for (int i = 0; i < numberOfCheese; i++){
+      if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
+        minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
+      }
+    }
 
    double cat_cheese_dist_diff_reward = 0;
+<<<<<<< HEAD
    //double cat_cheese_dist_diff = minCat - minCheese;
+=======
+>>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
    double cat_cheese_dist_diff = minCheese - minCat;
+   //double cat_cheese_dist_diff = minCheeseMan - minCatMan;
    double size_factor = (size_X/2);
    //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
    //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
    //on how close the cat is to the mouse.
    if (cat_cheese_dist_diff <= -8) {
-     cat_cheese_dist_diff_reward += 108 * size_factor;
+     cat_cheese_dist_diff_reward = 108 * size_factor;
    } else if (cat_cheese_dist_diff <= -4) {
-     cat_cheese_dist_diff_reward += 90 * size_factor;
+     cat_cheese_dist_diff_reward = 90 * size_factor;
    } else if (cat_cheese_dist_diff <= 0) {
-     cat_cheese_dist_diff_reward += 72 * size_factor;
+     cat_cheese_dist_diff_reward = 72 * size_factor;
+   } else if (cat_cheese_dist_diff >= 15) {
+     cat_cheese_dist_diff_reward = 0;
    } else if (cat_cheese_dist_diff >= 11) {
-     cat_cheese_dist_diff_reward += 54 * size_factor;
+     cat_cheese_dist_diff_reward = 18 * size_factor;
    } else if (cat_cheese_dist_diff >= 6) {
-     cat_cheese_dist_diff_reward += 36 * size_factor;
-   } else if (cat_cheese_dist_diff >= 1) {
-     cat_cheese_dist_diff_reward += 18 * size_factor;
+     cat_cheese_dist_diff_reward = 36 * size_factor;
+   } else if (cat_cheese_dist_diff > 0) {
+     cat_cheese_dist_diff_reward = 54 * size_factor;
    }
 
 
   int wall_counter = 0;
+<<<<<<< HEAD
   int temp_mouse_pos[1][2];
+=======
+  //int cheeseAdjacent = 0;
+  //int temp_mouse_pos[1][2];
+>>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
 
    //Count number of walls around mouse.
    for (int x = 0; x < 4; x++) {
@@ -488,18 +489,24 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
      wall_reward = 20;
    }
 
+<<<<<<< HEAD
    //assume values int cats, cheeses are non -1 for the first catsInGame, cheeseInGame indices
 
    //feature 0 - closest cheese via gaussian func
    //feature 1 - closest cat via gaussian func
    //feature 2 - difference between minimum cheese distance and minimum cat distance
    //feature 3 - deadend detection (returns smaller value when at a deadend)
+=======
+   //feature 1 - closest cheese via gaussian func
+   //feature 2 - closest cat via gaussian func
+   //feature 3 - difference between minimum cheese distance and minimum cat distance
+>>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
-   features[0] = 1.0/(minCheese+1.0);
-   features[1] = 1 - 1.0/(minCat+1.0);
-   features[2] = 1 - 1/cat_cheese_dist_diff_reward;
-   features[3] = 1/(1+wall_reward);
+   features[0] = 1/(minCheese + 1);
+   features[1] = 1 - 1/(minCat + 1);
+   features[2] = 1 - 1/(cat_cheese_dist_diff_reward + 1);
+   features[3] = 1/(wall_reward + 1);
 }
 
 double Qsa(double weights[25], double features[25]) {
@@ -524,7 +531,6 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
     Given the state represented by the input positions for mouse, cats, and cheese, this function evaluates
     the Q-value at all possible neighbour states and returns the max. The maximum value is returned in maxU
     and the index of the action corresponding to this value is returned in maxA.
-
     You should make sure the function does not evaluate moves that would make the mouse walk through a
     wall.
    */
