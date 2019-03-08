@@ -390,15 +390,15 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    * TO DO: Complete this function
    ***********************************************************************************************/
    //Set up for BFS to return optimal path length to cat/cheese
-   double distances_from_mouse[32][32];
-   for (int x = 0; x < size_X; x++) {
-     for (int y = 0; y < size_X; y++) {
-       distances_from_mouse[x][y] = INFINITY;
-     }
-   }
-   distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
-   int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
-   BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
+  //  double distances_from_mouse[32][32];
+  //  for (int x = 0; x < size_X; x++) {
+  //    for (int y = 0; y < size_X; y++) {
+  //      distances_from_mouse[x][y] = INFINITY;
+  //    }
+  //  }
+  //  distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
+  //  int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+  //  BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
 
    int numberOfCheese = 0;
    int numberOfCats = 0;
@@ -413,21 +413,17 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
      }
    }
 
-  /*double minCatMan = INFINITY;
-  double minCheeseMan = INFINITY;
 
-  for (int i = 0; i < numberOfCats; i++){
-     if (manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]) < minCatMan){
-       minCatMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]);
+   double distances_from_mouse[32][32];
+   for (int x = 0; x < size_X; x++) {
+     for (int y = 0; y < size_X; y++) {
+       distances_from_mouse[x][y] = INFINITY;
      }
    }
+   distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
+   int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
+   BFS(gr, mouse_index, cats, numberOfCats, cheeses, numberOfCheese, distances_from_mouse, size_X);
 
-   //calculate distance to nearest cheese
-   for (int i = 0; i < numberOfCheese; i++){
-     if (manhat(mouse_pos[0][0], mouse_pos[0][1],cheeses[i][0],cheeses[i][1]) < minCheeseMan){
-       minCheeseMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cheeses[i][0],cheeses[i][1]);
-     }
-   }*/
 
     double minCat = INFINITY;
     double minCheese = INFINITY;
@@ -435,25 +431,41 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     double catOneAway = 0;
     double cheeseAdj = 10;
 
+    double catsDistance[numberOfCats];
+    double cheeseDistance[numberOfCheese];
 
     for (int i = 0; i < numberOfCats; i++) {
+      catsDistance[i] = distances_from_mouse[cats[i][0]][cats[i][1]];
       if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
         minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
       }
     }
 
-    if (minCat == 1) {
+    if (minCat <= 1) {
       catOneAway = 20;
     }
 
     for (int i = 0; i < numberOfCheese; i++) {
+      cheeseDistance[i] = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
       if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
         minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
       }
     }
 
-    if (minCheese == 1) {
-      catOneAway = 0;
+  double avgCheese = 0;
+  double avgCat = 0;
+    for (int i = 0; i < numberOfCats; i++) {
+      avgCat += catsDistance[i];
+    }
+    avgCat = avgCat/(double)numberOfCats;
+
+    for (int i = 0; i < numberOfCheese; i++) {
+      avgCheese += cheeseDistance[i];
+    }
+    avgCheese = avgCheese/(double)numberOfCheese;
+
+    if (minCheese <= 1) {
+      cheeseAdj = 0;
     }
 
    double cat_cheese_dist_diff_reward = 0;
@@ -477,6 +489,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    } else if (cat_cheese_dist_diff > 0) {
      cat_cheese_dist_diff_reward = 54 * size_factor;
    }
+
 
   int wall_counter = 0;
 
@@ -504,6 +517,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    features[3] = 1/(wall_reward + 1);
    features[4] = 1/(catOneAway+1);
    features[5] = 1/(cheeseAdj+1);
+   features[6] = 1.0/(avgCheese+1);
+   features[7] = 1 - 1.0/(avgCat+1);
 }
 
 double Qsa(double weights[25], double features[25]) {
@@ -552,7 +567,20 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
        temp_mouse_pos[0][0] = mouse_pos[0][0] - ((x - 2) % 2);
        temp_mouse_pos[0][1] = mouse_pos[0][1] + ((x - 1) % 2);
        // evaluate maximum for possible new cat positions and given mouse position
-       double curr = maxQsaHelper(gr, weights, temp_mouse_pos, cats, numberOfCats, 0, cheeses, size_X, graph_size);
+        // int catsalike[5][2];
+        // for (int i = 0; i < 5; i++){
+        //   if (cats[i][0]!=-1){
+        //     catsalike[i][0] = cats[i][0];
+        //     catsalike[i][1] = cats[i][1];
+        //   } else {
+        //     catsalike[i][0] = -1; 
+        //     catsalike[i][1] = -1;
+        //   }
+        // }
+        // double curr = maxQsaHelper(gr, weights, temp_mouse_pos, catsalike, numberOfCats, 0, cheeses, size_X, graph_size);
+       double features[25];
+       evaluateFeatures(gr, features, temp_mouse_pos, cats, cheeses, size_X, graph_size);
+       double curr = Qsa(weights, features);
        if (curr > * maxU) {
          // sets maximum QValue at current loop iteration
          *maxU = curr;
