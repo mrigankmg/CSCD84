@@ -353,8 +353,24 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
   return move;
 }
 
-double manhat(int h1, int h2, int g1, int g2) {
-  return sqrt(pow(abs(h1 - g1), 2) + pow(abs(h2 - g2), 2));
+// double manhat(int h1, int h2, int g1, int g2) {
+//   return sqrt(pow(abs(h1 - g1), 2) + pow(abs(h2 - g2), 2));
+// }
+
+int populateCatAdjacentTiles(double gr[max_graph_size][4], int potCatPos[20][2], int cats[5][2], int numCats){
+  int catCounter = 0;
+  int temp_cat_position[1][2];
+  for (int i = 0; i < numCats; i++){
+    int currentCatPos = cats[i][0] + cats[i][1]*32;
+    if (gr[currentCatPos][i]){
+      temp_cat_position[0][0] = cats[i][0] - ((i - 2) % 2);
+      temp_cat_position[0][1] = cats[i][1] + ((i - 1) % 2);
+      potCatPos[catCounter][0] = temp_cat_position[0][0];
+      potCatPos[catCounter][1] = temp_cat_position[0][1];
+      catCounter++;
+    }
+  }
+  return catCounter;
 }
 
 void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mouse_pos[1][2], int cats[5][2], int cheeses[5][2], int size_X, int graph_size) {
@@ -387,15 +403,9 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
    int numberOfCheese = 0;
    int numberOfCats = 0;
 
-<<<<<<< HEAD
-   //checking number of cats/cheese given input
-   for (int j = 0; j < 5; j++){
-     if (cats[j][0] != -1){
-=======
    for (int x = 0; x < 5; x++){
      //only need to check one coordinate
      if (cats[x][0] != -1){
->>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
        numberOfCats++;
      }
      if (cheeses[x][0] != -1){
@@ -403,51 +413,34 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
      }
    }
 
-  /*double minCatMan = INFINITY;
-  double minCheeseMan = INFINITY;
-
-<<<<<<< HEAD
-   //calculate distance to nearest cat
-   for (int i = 0; i < numberOfCats; i++){
-     if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
-       minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
-=======
-  for (int i = 0; i < numberOfCats; i++){
-     if (manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]) < minCatMan){
-       minCatMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cats[i][0],cats[i][1]);
->>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
-     }
-   }
-
-   //calculate distance to nearest cheese
-   for (int i = 0; i < numberOfCheese; i++){
-     if (manhat(mouse_pos[0][0], mouse_pos[0][1],cheeses[i][0],cheeses[i][1]) < minCheeseMan){
-       minCheeseMan = manhat(mouse_pos[0][0], mouse_pos[0][1],cheeses[i][0],cheeses[i][1]);
-     }
-   }*/
-
     double minCat = INFINITY;
     double minCheese = INFINITY;
 
-    for (int i = 0; i < numberOfCats; i++){
+    double catOneAway = 0;
+    double cheeseAdj = 10;
+
+    for (int i = 0; i < numberOfCats; i++) {
       if (distances_from_mouse[cats[i][0]][cats[i][1]] < minCat){
         minCat = distances_from_mouse[cats[i][0]][cats[i][1]];
       }
     }
 
-    for (int i = 0; i < numberOfCheese; i++){
+    if (minCat == 1) {
+      catOneAway = 20;
+    }
+
+    for (int i = 0; i < numberOfCheese; i++) {
       if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese){
         minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
       }
     }
 
+    if (minCheese == 1) {
+      catOneAway = 0;
+    }
+
    double cat_cheese_dist_diff_reward = 0;
-<<<<<<< HEAD
-   //double cat_cheese_dist_diff = minCat - minCheese;
-=======
->>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
    double cat_cheese_dist_diff = minCheese - minCat;
-   //double cat_cheese_dist_diff = minCheeseMan - minCatMan;
    double size_factor = (size_X/2);
    //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
    //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
@@ -470,12 +463,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
 
 
   int wall_counter = 0;
-<<<<<<< HEAD
-  int temp_mouse_pos[1][2];
-=======
-  //int cheeseAdjacent = 0;
-  //int temp_mouse_pos[1][2];
->>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
 
    //Count number of walls around mouse.
    for (int x = 0; x < 4; x++) {
@@ -483,30 +470,24 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
        wall_counter++;
      }
    }
+
    double wall_reward = 0;
    //If mouse is at a square with 3 walls around it then reduce the reward some more.
    if (wall_counter == 3) {
      wall_reward = 20;
    }
 
-<<<<<<< HEAD
-   //assume values int cats, cheeses are non -1 for the first catsInGame, cheeseInGame indices
-
-   //feature 0 - closest cheese via gaussian func
-   //feature 1 - closest cat via gaussian func
-   //feature 2 - difference between minimum cheese distance and minimum cat distance
-   //feature 3 - deadend detection (returns smaller value when at a deadend)
-=======
    //feature 1 - closest cheese via gaussian func
    //feature 2 - closest cat via gaussian func
    //feature 3 - difference between minimum cheese distance and minimum cat distance
->>>>>>> 5467a41038690aeb4f50f3c9b2b50353f9c19912
    //new features - deadends and corners possibly
    //also new features - maybe mean distance between cats/cheeses
    features[0] = 1/(minCheese + 1);
    features[1] = 1 - 1/(minCat + 1);
    features[2] = 1 - 1/(cat_cheese_dist_diff_reward + 1);
    features[3] = 1/(wall_reward + 1);
+   features[4] = 1/(catOneAway+1);
+   features[5] = 1/(cheeseAdj+1);
 }
 
 double Qsa(double weights[25], double features[25]) {
