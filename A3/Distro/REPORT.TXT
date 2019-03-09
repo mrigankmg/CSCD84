@@ -84,7 +84,7 @@ but explain carefully when needed.
      Average rate for Experiement 3 and Experiment 4: Average of Experiment 3 = 33.3165%, Average of Experiment 4 = 47.1141%
 
      (1 mark) Compare with the rate obtained in experiment 2. What is happening here?
-	A: The rate is a lot lower for Experiment 3 and Experiment 4, since the environment isn't static from Experiment 2, the one on which the mouse was actually trained.
+	   A: The rate is a lot lower for Experiment 3 and Experiment 4, since the environment isn't static from Experiment 2, the one on which the mouse was actually trained.
 	   In other words, since the environment layout changes the mouse doesn't know how to perform on it, and thus performs poorly.
 
 5 .- Understanding the effects of state space on learning ability:
@@ -92,12 +92,15 @@ but explain carefully when needed.
      (1 mark) # Experiment 5 - Train your mouse on the 16x16 grid, using random seed
      # 1522, 1000000 trials, and 50 training rounds. Cat-smartness=.9
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 3.0010%
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 63.1559%
 
      (1 mark) Compare the final winning rate with that from Experiment 2, what can
      you say about the difference in winning rates?
+     A: The winning rate is a lot lower for Experiment 5 compered to Experiment 2; this is because
+     the state space is a lot larger for a 16x16 grid, compared to an 8x8 grid. The mouse needs
+     to be trained a lot longer to achieve a winning rate similar to the one seen on the 8x8 grid.
 
 6 .- (2 marks) Is standard Q-Learning a reasonable strategy for environments
      that change constantly? discuss based on the above
@@ -112,9 +115,9 @@ but explain carefully when needed.
      # the 16x16 grid, one cat, and one cheese, cat-smartness=.9,
      # random seed = 1522, and use 1000000 trials and 50 rounds.
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 3.2204%
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 
 
      Compare this rate against the rate obtained in Experiment #5, what
      are your conclusions regarding the utility of feature-based

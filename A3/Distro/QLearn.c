@@ -476,7 +476,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   features[1] = 1 - 1 / (minCat + 1);
   features[2] = 1 - 1 / (cat_cheese_dist_diff_reward + 1);
   if (wall_counter == 3 && minCheese > 0) {
-    features[3] = 1 / 21;
+    features[3] = 1 / 11;
   } else {
     features[3] = 1;
   }
@@ -491,8 +491,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
     features[5] = 1 / 11;
   }
   features[6] = 1.0 / (avgCheese + 1);*/
-  //This feature causes one cat situations to perform slightly worse, but multiple
-  //cat situations to perform a lot better..
   if(numberOfCats > 1) {
     features[4] = 1 - 1.0 / (avgCat + 1);
   } else {
