@@ -442,18 +442,20 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   //If cat is farther from mouse than cheese, then add to the reward depending on how far the cat is
   //from the mouse. If cat is closer to mouse than cheese, then subtract from the reward depending
   //on how close the cat is to the mouse.
-  if (cat_cheese_dist_diff <= -8) {
+  if (cat_cheese_dist_diff <= -14*size_factor){
+    cat_cheese_dist_diff_reward = 150 * size_factor;
+  } else if (cat_cheese_dist_diff <= -6*size_factor) {
     cat_cheese_dist_diff_reward = 108 * size_factor;
-  } else if (cat_cheese_dist_diff <= -4) {
+  } else if (cat_cheese_dist_diff <= -3*size_factor) {
     cat_cheese_dist_diff_reward = 90 * size_factor;
   } else if (cat_cheese_dist_diff <= 0) {
     cat_cheese_dist_diff_reward = 72 * size_factor;
-  } else if (cat_cheese_dist_diff >= 15) {
+  } else if (cat_cheese_dist_diff >= 8*size_factor) {
     cat_cheese_dist_diff_reward = 0;
-  } else if (cat_cheese_dist_diff >= 11) {
+  } else if (cat_cheese_dist_diff >= 11*size_factor) {
+    cat_cheese_dist_diff_reward = 8 * size_factor;
+  } else if (cat_cheese_dist_diff >= 6*size_factor) {
     cat_cheese_dist_diff_reward = 18 * size_factor;
-  } else if (cat_cheese_dist_diff >= 6) {
-    cat_cheese_dist_diff_reward = 36 * size_factor;
   } else if (cat_cheese_dist_diff > 0) {
     cat_cheese_dist_diff_reward = 54 * size_factor;
   }
