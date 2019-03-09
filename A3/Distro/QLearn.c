@@ -390,17 +390,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   /***********************************************************************************************
    * TO DO: Complete this function
    ***********************************************************************************************/
-  //Set up for BFS to return optimal path length to cat/cheese
-  //  double distances_from_mouse[32][32];
-  //  for (int x = 0; x < size_X; x++) {
-  //    for (int y = 0; y < size_X; y++) {
-  //      distances_from_mouse[x][y] = INFINITY;
-  //    }
-  //  }
-  //  distances_from_mouse[mouse_pos[0][0]][mouse_pos[0][1]] = 0;
-  //  int mouse_index = mouse_pos[0][0] + (mouse_pos[0][1] * size_X);
-  //  BFS(gr, mouse_index, cats, 1, cheeses, 1, distances_from_mouse, size_X);
-
   int numberOfCheese = 0;
   int numberOfCats = 0;
 
@@ -426,7 +415,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   BFS(gr, mouse_index, cats, numberOfCats, cheeses, numberOfCheese, distances_from_mouse, size_X);
   double minCat = INFINITY;
   double minCheese = INFINITY;
-  double avgCheese = 0;
+  //double avgCheese = 0;
   double avgCat = 0;
 
   for (int i = 0; i < numberOfCats; i++) {
@@ -439,13 +428,13 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   avgCat = avgCat / (double) numberOfCats;
 
   for (int i = 0; i < numberOfCheese; i++) {
-    avgCheese += distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
+    //avgCheese += distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
     if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese) {
       minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
     }
   }
 
-  avgCheese = avgCheese / (double) numberOfCheese;
+  //avgCheese = avgCheese / (double) numberOfCheese;
 
   double cat_cheese_dist_diff_reward = 0;
   double cat_cheese_dist_diff = minCheese - minCat;
@@ -486,12 +475,12 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   features[0] = 1 / (minCheese + 1);
   features[1] = 1 - 1 / (minCat + 1);
   features[2] = 1 - 1 / (cat_cheese_dist_diff_reward + 1);
-  if (wall_counter == 3) {
+  if (wall_counter == 3 && minCheese > 0) {
     features[3] = 1 / 21;
   } else {
     features[3] = 1;
   }
-  if (minCat <= 1) {
+  /*if (minCat <= 1) {
     features[4] = 1 / 21;
   } else {
     features[4] = 1;
@@ -501,8 +490,14 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   } else {
     features[5] = 1 / 11;
   }
-  features[6] = 1.0 / (avgCheese + 1);
-  features[7] = 1 - 1.0 / (avgCat + 1);
+  features[6] = 1.0 / (avgCheese + 1);*/
+  //This feature causes one cat situations to perform slightly worse, but multiple
+  //cat situations to perform a lot better..
+  if(numberOfCats > 1) {
+    features[4] = 1 - 1.0 / (avgCat + 1);
+  } else {
+    features[4] = 0;
+  }
 }
 
 double Qsa(double weights[25], double features[25]) {
