@@ -117,7 +117,7 @@ but explain carefully when needed.
 
      Initial mouse winning rate (first rate obtained when training starts): 3.2204%
 
-     Mouse Winning Rate (from evaluation after training): 
+     Mouse Winning Rate (from evaluation after training): 76.5528%
 
      Compare this rate against the rate obtained in Experiment #5, what
      are your conclusions regarding the utility of feature-based
@@ -127,13 +127,13 @@ but explain carefully when needed.
      # re-training) run the evaluation using random seed 4289, same
      # 1 cheese, 1 cat, and cat-smartness=.9, 16x16 grid
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 76.1977%
 
      (1 mark) # Experiment 8, using the saved weights from Experiment 6 (no
      # re-training) run the evaluation using random seed 31415, same
      # 1 cheese, 1 cat, and cat-smartness=.9, 16x16 grid
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 76.7146%
 
      (1 mark) Comparing the winning rates from Experiments #7 and #8 against
      those from Experiment #6, what can you conclude about feature-
@@ -146,21 +146,21 @@ but explain carefully when needed.
      # the 16x16 grid, 2 cats, and 3 cheeses, cat-smartness=.9,
      # random seed = 1522, and use 1000000 trials and 50 rounds.
 
-     Initial mouse winning rate (first rate obtained when training starts):
+     Initial mouse winning rate (first rate obtained when training starts): 8.6726%
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 79.9304%
 
      (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
      # re-training), run the evaluation on the 16x16 grid, 2 cats,
      # 3 cheeses, cat-smartness=.9, and random seed 4289
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 78.7606%
 
      (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
      # re-training), run the evaluation on the 32x32 grid, 2 cats,
      # 3 cheeses, cat-smartness=.9, and random seed 4289
 
-     Mouse Winning Rate (from evaluation after training):
+     Mouse Winning Rate (from evaluation after training): 73.5841%
 
      (2 marks) Based on the last 3 experiments, what can you conclude regarding
      the usefulness and applicability of standard Q-Learning vs.
