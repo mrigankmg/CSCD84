@@ -42,6 +42,7 @@ but explain carefully when needed.
       are used, and why you think this is a good reward function
       for this problem.
 
+	
 
 
 2 .- These are multiple experiments (once you are sure your
@@ -148,19 +149,19 @@ but explain carefully when needed.
 
      Initial mouse winning rate (first rate obtained when training starts): 8.6726%
 
-     Mouse Winning Rate (from evaluation after training): 79.9304%
+     Mouse Winning Rate (from evaluation after training): 87.1393%
 
      (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
      # re-training), run the evaluation on the 16x16 grid, 2 cats,
      # 3 cheeses, cat-smartness=.9, and random seed 4289
 
-     Mouse Winning Rate (from evaluation after training): 78.7606%
+     Mouse Winning Rate (from evaluation after training): 86.2724%
 
      (1 mark) # Experiment 9: Using the trained weights from Experiment 9, (no
      # re-training), run the evaluation on the 32x32 grid, 2 cats,
      # 3 cheeses, cat-smartness=.9, and random seed 4289
 
-     Mouse Winning Rate (from evaluation after training): 73.5841%
+     Mouse Winning Rate (from evaluation after training): 88.9885%
 
      (2 marks) Based on the last 3 experiments, what can you conclude regarding
      the usefulness and applicability of standard Q-Learning vs.
@@ -171,6 +172,9 @@ but explain carefully when needed.
       can take advantage of reinforcement learning but not spend millions on
       broken robots that keep falling down the stairs?
 
+	A: Train the robot in a controlled environment that introduces it to a series of different environmental factors (such as differences in height, uneven terrain, etc). 
+This will allow the robot to take into account many different factors (based on the features we've defined) while also being relatively safe from harm/damage as it's being trained in a controlled environment.
+As feature based Q-Learning is somewhat environment independent (as specific factors in the environment still have to be specified by the programmer/person training the robot as features) introducing it to an uncontrolled environment after being trained still results in it performing successfully, as the robot can respond properly to a non-static environment due to feature based Q-Learning training the robot in a more generalized way (i.e it can respond to states it's never visited before, in contrast to standard Q-Learning). 
 
 _____________________________________________________
 
