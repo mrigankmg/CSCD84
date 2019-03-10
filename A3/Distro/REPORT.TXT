@@ -115,9 +115,9 @@ but explain carefully when needed.
      # the 16x16 grid, one cat, and one cheese, cat-smartness=.9,
      # random seed = 1522, and use 1000000 trials and 50 rounds.
 
-     Initial mouse winning rate (first rate obtained when training starts): 3.2204%
+     Initial mouse winning rate (first rate obtained when training starts): 3.3080%
 
-     Mouse Winning Rate (from evaluation after training): 76.5528%
+     Mouse Winning Rate (from evaluation after training): 87.0781%
 
      Compare this rate against the rate obtained in Experiment #5, what
      are your conclusions regarding the utility of feature-based
@@ -127,13 +127,13 @@ but explain carefully when needed.
      # re-training) run the evaluation using random seed 4289, same
      # 1 cheese, 1 cat, and cat-smartness=.9, 16x16 grid
 
-     Mouse Winning Rate (from evaluation after training): 76.1977%
+     Mouse Winning Rate (from evaluation after training): 86.4933%
 
      (1 mark) # Experiment 8, using the saved weights from Experiment 6 (no
      # re-training) run the evaluation using random seed 31415, same
      # 1 cheese, 1 cat, and cat-smartness=.9, 16x16 grid
 
-     Mouse Winning Rate (from evaluation after training): 76.7146%
+     Mouse Winning Rate (from evaluation after training): 87.8494%
 
      (1 mark) Comparing the winning rates from Experiments #7 and #8 against
      those from Experiment #6, what can you conclude about feature-
