@@ -42,8 +42,21 @@ but explain carefully when needed.
       are used, and why you think this is a good reward function
       for this problem.
 
-	
+      The reward function takes into consideration the distance from the mouse
+      to the cheese, to the cat, the relative distance from the mouse to the cat
+      and cheese, and the number of walls around the mouse's current position. A highly
+      positive reward is given to the mouse if the mouse eats the cheese. A highly negative
+      reward is given to the mouse if it gets eaten by the cat. If the mouse is surrounded
+      by 3 walls in it's current position, the reward is made a little more negative, as long
+      as there's no cheese at that location. Finally, if the mouse is closer to the cat than
+      the cheese, then the reward is made negative, and if it's closer to the cheese than
+      the cat, the reward is made positive.
 
+      This is a good reward function because the distances train the mouse to run farther away
+      from the cat and move closer to the cheese, thus causing it to fail less often. Additionally,
+      taking into consideration the number of walls that surrounds the mouse, trains the mouse to avoid
+      dead ends at all costs. This means that if the cat is at the mouse's tail, it will be less likely
+      to fail.
 
 2 .- These are multiple experiments (once you are sure your
      QLearning code is working!)
@@ -107,9 +120,9 @@ but explain carefully when needed.
      that change constantly? discuss based on the above
 
 	A: It is not, as training using standard Q-Learning needs a static environment, as the states/size of the
-	Q-Table remains constant regardless of the environment changing. As seen in the past experiments, when the 
+	Q-Table remains constant regardless of the environment changing. As seen in the past experiments, when the
 	mouse is trained using standard Q-Learning in one seed, using the same table for another entirely new seed
-	results in very poor performance of the mouse as the optimal action depending on state in one seed (where the mouse was first trained) 
+	results in very poor performance of the mouse as the optimal action depending on state in one seed (where the mouse was first trained)
 	might be entirely different from the optimal action given an equivalent state in another seed.
 
 7 .- (3 marks) Explain your feature set for feature-based Q Learning, and
@@ -121,14 +134,14 @@ but explain carefully when needed.
 	and cat distance.
 	Feature 1 - closest cheese - helps mouse win by incentivizing mouse to move towards nearest cheese
   	feature 2 - closest cat - attempts to maximize distance from nearest cat so as to not be eaten and lose the game
-  	feature 3 - reward based on difference between minimum cheese distance and minimum cat distance - attempts to give a reward 
+  	feature 3 - reward based on difference between minimum cheese distance and minimum cat distance - attempts to give a reward
 	based on ratio between minimum cheese distance and minimum cat distance. This is so that the the mouse is incentivized to take
 	actions which minimize cheese distance while also maximizing cat distance during the same move.
   	feature 4 - disincentivize dead-ends unless cheese is there - attempts to incentivize the mouse not to move into dead-ends in the
 	maze and get itself trapped/stuck.
   	feature 5 - mean distance from mouse to all cats - attempt to maximize this so that the mouse avoids areas of high cat concentration/density
 	(so it attempts to avoid these areas even when cheese is near/present at locations of high cat density)
-  
+
 
 8 .- Carry out the following experiments:
 
@@ -162,10 +175,10 @@ but explain carefully when needed.
      to the environment?
 
 	A: Unlike standard Q-Learning, feature based Q-Learning allows the mouse to perform well
-	in environments that it hasn't been trained in. As there isn't a QTable dependent on states 
+	in environments that it hasn't been trained in. As there isn't a QTable dependent on states
 	(only weights are modified and saved) it allows the mouse to perform the optimal action
 	in unvisited/new states and new environments/seeds.
-	
+
 
 9 .- Carry out the following experiments:
 
@@ -198,9 +211,9 @@ but explain carefully when needed.
       can take advantage of reinforcement learning but not spend millions on
       broken robots that keep falling down the stairs?
 
-	A: Train the robot in a controlled environment that introduces it to a series of different environmental factors (such as differences in height, uneven terrain, etc). 
+	A: Train the robot in a controlled environment that introduces it to a series of different environmental factors (such as differences in height, uneven terrain, etc).
 This will allow the robot to take into account many different factors (based on the features we've defined) while also being relatively safe from harm/damage as it's being trained in a controlled environment.
-As feature based Q-Learning is somewhat environment independent (as specific factors in the environment still have to be specified by the programmer/person training the robot as features) introducing it to an uncontrolled environment after being trained still results in it performing successfully, as the robot can respond properly to a non-static environment due to feature based Q-Learning training the robot in a more generalized way (i.e it can respond to states it's never visited before, in contrast to standard Q-Learning). 
+As feature based Q-Learning is somewhat environment independent (as specific factors in the environment still have to be specified by the programmer/person training the robot as features) introducing it to an uncontrolled environment after being trained still results in it performing successfully, as the robot can respond properly to a non-static environment due to feature based Q-Learning training the robot in a more generalized way (i.e it can respond to states it's never visited before, in contrast to standard Q-Learning).
 
 _____________________________________________________
 

@@ -354,10 +354,6 @@ int feat_QLearn_action(double gr[max_graph_size][4], double weights[25], int mou
   return move;
 }
 
-// double manhat(int h1, int h2, int g1, int g2) {
-//   return sqrt(pow(abs(h1 - g1), 2) + pow(abs(h2 - g2), 2));
-// }
-
 int populateCatAdjacentTiles(double gr[max_graph_size][4], int potCatPos[20][2], int cats[5][2], int numCats) {
   int catCounter = 0;
   int temp_cat_position[1][2];
@@ -432,7 +428,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
       minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
     }
   }
-  
+
   double cat_cheese_dist_diff_reward = 0;
   double cat_cheese_dist_diff = minCheese - minCat;
   double size_factor = (size_X / 2);
@@ -531,18 +527,6 @@ void maxQsa(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2
       // consider new mouse position given x
       temp_mouse_pos[0][0] = mouse_pos[0][0] - ((x - 2) % 2);
       temp_mouse_pos[0][1] = mouse_pos[0][1] + ((x - 1) % 2);
-      // evaluate maximum for possible new cat positions and given mouse position
-      // int catsalike[5][2];
-      // for (int i = 0; i < 5; i++){
-      //   if (cats[i][0]!=-1){
-      //     catsalike[i][0] = cats[i][0];
-      //     catsalike[i][1] = cats[i][1];
-      //   } else {
-      //     catsalike[i][0] = -1;
-      //     catsalike[i][1] = -1;
-      //   }
-      // }
-      // double curr = maxQsaHelper(gr, weights, temp_mouse_pos, catsalike, numberOfCats, 0, cheeses, size_X, graph_size);
       double features[25];
       evaluateFeatures(gr, features, temp_mouse_pos, cats, cheeses, size_X, graph_size);
       double curr = Qsa(weights, features);
@@ -613,33 +597,3 @@ void BFS(double gr[max_graph_size][4], int source_index, int cat_loc[5][2], int 
     }
   }
 }
-
-/*double maxQsaHelper(double gr[max_graph_size][4], double weights[25], int mouse_pos[1][2], int cats[5][2], int numCats, int counter, int cheeses[5][2], int size_X, int graph_size) {
-  if (counter == numCats) {
-    return -INFINITY;
-  }
-  // consider cat index as index of gr
-  int cat_index = cats[counter][0] + (cats[counter][1] * size_X);
-  double curr_max = -INFINITY;
-  for (int y = 0; y < 4; y++) {
-    // see what possible tiles are adjacent to cat that cat can move to
-    if (gr[cat_index][y]) {
-      // consider new position of cat given action y
-      cats[counter][0] = cats[counter][0] - ((y - 2) % 2);
-      cats[counter][1] = cats[counter][1] + ((y - 1) % 2);
-      // recursively call for max cat value
-      double next_max = maxQsaHelper(gr, weights, mouse_pos, cats, numCats, counter + 1, cheeses, size_X, graph_size);
-      // initialize/evaluate features given state
-      double features[25];
-      evaluateFeatures(gr, features, mouse_pos, cats, cheeses, size_X, graph_size);
-      // calculate Qsa value with current state and select maximal value
-      double curr_q = Qsa(weights, features);
-      if (curr_q > next_max && curr_q > curr_max) {
-        curr_max = curr_q;
-      } else if (curr_q <= next_max && next_max > curr_max) {
-        curr_max = next_max;
-      }
-    }
-  }
-  return curr_max;
-}*/
