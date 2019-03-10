@@ -106,9 +106,29 @@ but explain carefully when needed.
 6 .- (2 marks) Is standard Q-Learning a reasonable strategy for environments
      that change constantly? discuss based on the above
 
+	A: It is not, as training using standard Q-Learning needs a static environment, as the states/size of the
+	Q-Table remains constant regardless of the environment changing. As seen in the past experiments, when the 
+	mouse is trained using standard Q-Learning in one seed, using the same table for another entirely new seed
+	results in very poor performance of the mouse as the optimal action depending on state in one seed (where the mouse was first trained) 
+	might be entirely different from the optimal action given an equivalent state in another seed.
+
 7 .- (3 marks) Explain your feature set for feature-based Q Learning, and
                explain why and how each feature is expected to contribute
 	       to helping your mouse win
+
+	A: The features we've implemented typically have to do with minimizing the mouse's distance to the cheese
+	and maximizing it's distance to any number of cats, and trying to minimize the ratio between cheese distance
+	and cat distance.
+	Feature 1 - closest cheese - helps mouse win by incentivizing mouse to move towards nearest cheese
+  	feature 2 - closest cat - attempts to maximize distance from nearest cat so as to not be eaten and lose the game
+  	feature 3 - reward based on difference between minimum cheese distance and minimum cat distance - attempts to give a reward 
+	based on ratio between minimum cheese distance and minimum cat distance. This is so that the the mouse is incentivized to take
+	actions which minimize cheese distance while also maximizing cat distance during the same move.
+  	feature 4 - disincentivize dead-ends unless cheese is there - attempts to incentivize the mouse not to move into dead-ends in the
+	maze and get itself trapped/stuck.
+  	feature 5 - mean distance from mouse to all cats - attempt to maximize this so that the mouse avoids areas of high cat concentration/density
+	(so it attempts to avoid these areas even when cheese is near/present at locations of high cat density)
+  
 
 8 .- Carry out the following experiments:
 
@@ -140,6 +160,12 @@ but explain carefully when needed.
      those from Experiment #6, what can you conclude about feature-
      based Q-Learning in terms of its ability to deal with changes
      to the environment?
+
+	A: Unlike standard Q-Learning, feature based Q-Learning allows the mouse to perform well
+	in environments that it hasn't been trained in. As there isn't a QTable dependent on states 
+	(only weights are modified and saved) it allows the mouse to perform the optimal action
+	in unvisited/new states and new environments/seeds.
+	
 
 9 .- Carry out the following experiments:
 

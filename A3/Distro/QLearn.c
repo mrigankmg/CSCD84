@@ -393,6 +393,7 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   int numberOfCheese = 0;
   int numberOfCats = 0;
 
+  // checking coordinates to see total number of cheese/cats
   for (int x = 0; x < 5; x++) {
     //only need to check one coordinate
     if (cats[x][0] != -1) {
@@ -415,7 +416,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   BFS(gr, mouse_index, cats, numberOfCats, cheeses, numberOfCheese, distances_from_mouse, size_X);
   double minCat = INFINITY;
   double minCheese = INFINITY;
-  //double avgCheese = 0;
   double avgCat = 0;
 
   for (int i = 0; i < numberOfCats; i++) {
@@ -428,14 +428,11 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   avgCat = avgCat / (double) numberOfCats;
 
   for (int i = 0; i < numberOfCheese; i++) {
-    //avgCheese += distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
     if (distances_from_mouse[cheeses[i][0]][cheeses[i][1]] < minCheese) {
       minCheese = distances_from_mouse[cheeses[i][0]][cheeses[i][1]];
     }
   }
-
-  //avgCheese = avgCheese / (double) numberOfCheese;
-
+  
   double cat_cheese_dist_diff_reward = 0;
   double cat_cheese_dist_diff = minCheese - minCat;
   double size_factor = (size_X / 2);
@@ -472,8 +469,8 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   //feature 1 - closest cheese via gaussian func
   //feature 2 - closest cat via gaussian func
   //feature 3 - difference between minimum cheese distance and minimum cat distance
-  //new features - deadends and corners possibly
-  //also new features - maybe mean distance between cats/cheeses
+  //feature 4 - disincentivize dead-ends unless cheese is there
+  //feature 5 - mean distance from mouse to all cats - attempt to maximize this
   features[0] = 1 / (minCheese + 1);
   features[1] = 1 - 1 / (minCat + 1);
   features[2] = 1 - 1 / (cat_cheese_dist_diff_reward + 1);
@@ -482,17 +479,6 @@ void evaluateFeatures(double gr[max_graph_size][4], double features[25], int mou
   } else {
     features[3] = 1;
   }
-  /*if (minCat <= 1) {
-    features[4] = 1 / 21;
-  } else {
-    features[4] = 1;
-  }
-  if (minCheese <= 1) {
-    features[5] = 1;
-  } else {
-    features[5] = 1 / 11;
-  }
-  features[6] = 1.0 / (avgCheese + 1);*/
   if(numberOfCats > 1) {
     features[4] = 1 - 1.0 / (avgCat + 1);
   } else {
